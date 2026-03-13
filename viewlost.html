@@ -61,16 +61,16 @@ const lostRef = ref(db,"lostItems");
 onValue(lostRef,(snapshot)=>{
 
 const list = document.getElementById("lostList");
-list.innerHTML = "";
+list.innerHTML="";
 
 snapshot.forEach(child=>{
 
 const data = child.val();
 
-const div = document.createElement("div");
+const div=document.createElement("div");
 div.className="card";
 
-div.innerHTML = `
+div.innerHTML=`
 <h3>Lost Item</h3>
 <p><b>Item:</b> ${data.item}</p>
 <p><b>Description:</b> ${data.description}</p>
