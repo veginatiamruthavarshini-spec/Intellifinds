@@ -1,90 +1,97 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>Report Lost Item</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+body{
+font-family:Arial;
+background:#a9bdd6;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:15px;
+width:350px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+padding:10px 20px;
+background:#2f66e0;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="container">
 <div class="card">
 
 <h2>Report Lost Item</h2>
 
-<input type="text" id="itemname" placeholder="Item Name"><br><br>
+<input type="text" id="item" placeholder="Item Name">
 
-<input type="text" id="description" placeholder="Item Description"><br><br>
+<input type="text" id="description" placeholder="Description">
 
-<input type="text" id="location" placeholder="Location Lost"><br><br>
+<input type="text" id="location" placeholder="Location Lost">
 
-<input type="file" id="photo"><br><br>
+<button onclick="submitLost()">Submit</button>
 
-<button onclick="submitLost()" class="btn">Submit</button>
-  <br><br>
+<br><br>
 
-<a href="dashboard321.html" class="btn">Back to Dashboard</a>
+<a href="dashboard321.html">Back to Dashboard</a>
 
 </div>
-</div>
 
+<script type="module">
 
-<script>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
 authDomain: "intellifinds-19f97.firebaseapp.com",
-databaseURL: "https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId: "intellifinds-19f97",
 storageBucket: "intellifinds-19f97.appspot.com",
 messagingSenderId: "910756623728",
 appId: "1:910756623728:web:8ab55db46a984c75860bb5"
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db = firebase.database();
-const storage = firebase.storage();
+window.submitLost = function(){
 
+const item=document.getElementById("item").value;
+const description=document.getElementById("description").value;
+const location=document.getElementById("location").value;
 
-function submitLost(){
-
-const name = document.getElementById("itemname").value;
-const desc = document.getElementById("description").value;
-const loc = document.getElementById("location").value;
-
-const file = document.getElementById("photo").files[0];
-
-const storageRef = storage.ref("lostPhotos/" + file.name);
-
-storageRef.put(file).then(function(snapshot){
-
-snapshot.ref.getDownloadURL().then(function(url){
-
-db.ref("lostItems").push({
-
-name: name,
-description: desc,
-location: loc,
-image: url
-
+push(ref(db,"lostItems"),{
+item:item,
+description:description,
+location:location
 });
 
-alert("Lost item submitted successfully");
-
-window.location="viewlost.html";
-
-});
-
-});
+alert("Lost Item Submitted");
 
 }
 
