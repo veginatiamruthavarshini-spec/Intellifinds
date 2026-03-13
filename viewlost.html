@@ -40,9 +40,20 @@ let html = "";
 
 for(let id in data){
 
-html += "<p><b>Item:</b> "+data[id].name+"<br>"+
-"<b>Description:</b> "+data[id].description+"<br>"+
-"<b>Location:</b> "+data[id].location+"</p><hr>";
+html += `
+<div class="card" style="width:300px;margin:20px auto;text-align:left;">
+<h3>Lost Item</h3>
+
+<p><b>Item:</b> ${data[id].name}</p>
+
+<p><b>Description:</b> ${data[id].description}</p>
+
+<p><b>Location:</b> ${data[id].location}</p>
+
+<hr>
+
+</div>
+`;
 
 }
 
