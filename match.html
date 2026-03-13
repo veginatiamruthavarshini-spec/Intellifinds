@@ -1,73 +1,3 @@
-<!DOCTYPE html>
-
-<html>
-<head>
-
-<title>AI Match Results</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#a9bdd6;
-padding:40px;
-}
-
-h1{
-text-align:center;
-margin-bottom:30px;
-}
-
-.container{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:25px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-width:280px;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
-
-.card img{
-width:100%;
-border-radius:10px;
-margin-bottom:10px;
-}
-
-.score{
-font-weight:bold;
-color:#2f66e0;
-}
-
-.backbtn{
-display:block;
-width:200px;
-margin:40px auto;
-text-align:center;
-padding:10px;
-background:#2f66e0;
-color:white;
-text-decoration:none;
-border-radius:8px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>AI Matching Results</h1>
-
-<div class="container" id="matchList"></div>
-
-<a class="backbtn" href="dashboard321.html">Back to Dashboard</a>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -86,55 +16,75 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const container=document.getElementById("matchList");
+const container = document.getElementById("matchList");
 
-function similarity(a,b){
+function normalize(text){
+return text.toLowerCase().trim();
+}
 
-a=a.toLowerCase();
-b=b.toLowerCase();
+function calculateMatch(lost,found){
 
-if(a===b) return 100;
+let score = 0;
 
-let score=0;
+if(normalize(lost.item) === normalize(found.item))
+score += 60;
 
-if(a.includes(b) || b.includes(a)) score+=50;
+if(normalize(lost.description).includes(normalize(found.description)) ||
+normalize(found.description).includes(normalize(lost.description)))
+score += 30;
 
-const wordsA=a.split(" ");
-const wordsB=b.split(" ");
+if(normalize(lost.location) === normalize(found.location))
+score += 10;
 
-wordsA.forEach(word=>{
-if(wordsB.includes(word)) score+=10;
-});
-
-return Math.min(score,100);
-
+return score;
 }
 
 async function findMatches(){
 
-const lostSnap=await get(ref(db,"lostItems"));
-const foundSnap=await get(ref(db,"foundItems"));
+const lostSnap = await get(ref(db,"lostItems"));
+const foundSnap = await get(ref(db,"foundItems"));
 
-const lostItems=[];
-const foundItems=[];
+const lostItems = [];
+const foundItems = [];
 
-lostSnap.forEach(child=>{
-lostItems.push(child.val());
+lostSnap.forEach(child => lostItems.push(child.val()));
+foundSnap.forEach(child => foundItems.push(child.val()));
+
+lostItems.forEach(lost => {
+
+foundItems.forEach(found => {
+
+const score = calculateMatch(lost,found);
+
+if(score >= 50){
+
+const card = document.createElement("div");
+card.className = "card";
+
+card.innerHTML = `
+<h3>Possible Match</h3>
+
+<img src="${lost.photo || ''}">
+<p><b>Lost Item:</b> ${lost.item}</p>
+
+<img src="${found.photo || ''}">
+<p><b>Found Item:</b> ${found.item}</p>
+
+<p><b>Location:</b> ${lost.location}</p>
+
+<h3 style="color:#2f66e0;">Match Score: ${score}%</h3>
+`;
+
+container.appendChild(card);
+
+}
+
 });
 
-foundSnap.forEach(child=>{
-foundItems.push(child.val());
 });
 
-lostItems.forEach(lost=>{
+}
 
-foundItems.forEach(found=>{
+findMatches();
 
-const itemScore=similarity(lost.item,found.item);
-const descScore=similarity(lost.description,found.description);
-
-const totalScore=Math.round((itemScore+descScore)/2);
-
-if(totalScore>=50){
-
-const card=document.c
+</script>
