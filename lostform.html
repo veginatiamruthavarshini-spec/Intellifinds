@@ -48,16 +48,16 @@ const db = firebase.database();
 
 function submitLost(){
 
+console.log("Submit button clicked");
+
 const name = document.getElementById("itemname").value;
 const desc = document.getElementById("description").value;
 const loc = document.getElementById("location").value;
 
-db.ref("lostItems").push({
-
+firebase.database().ref("lostItems").push({
 name: name,
 description: desc,
 location: loc
-
 });
 
 alert("Lost item submitted successfully");
@@ -65,6 +65,7 @@ alert("Lost item submitted successfully");
 window.location = "viewlost.html";
 
 }
+
 
 </script>
 
