@@ -4,6 +4,43 @@
 <head>
 <title>Citizen Dashboard</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+.dashboard-buttons{
+width:100%;
+display:flex;
+flex-direction:column;
+gap:18px;
+margin-top:30px;
+}
+
+.dashboard-buttons a{
+display:block;
+width:100%;
+padding:14px;
+text-align:center;
+background:#2f66e0;
+color:white;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+font-size:16px;
+box-sizing:border-box;
+}
+
+.dashboard-buttons a:hover{
+background:#1d4ed8;
+}
+
+.dashboard-buttons .logout{
+background:#e53935;
+}
+
+.dashboard-buttons .logout:hover{
+background:#c62828;
+}
+</style>
+
 </head>
 
 <body>
@@ -17,17 +54,17 @@
 
 <div class="dashboard-buttons">
 
-<a href="lostform.html" class="btn">🔍 Report Lost Item</a>
+<a href="lostform.html">🔍 Report Lost Item</a>
 
-<a href="foundform.html" class="btn">📦 Report Found Item</a>
+<a href="foundform.html">📦 Report Found Item</a>
 
-<a href="viewlost.html" class="btn">📄 View Lost Items</a>
+<a href="viewlost.html">📄 View Lost Items</a>
 
-<a href="viewfound.html" class="btn">📄 View Found Items</a>
+<a href="viewfound.html">📄 View Found Items</a>
 
-<a href="match.html" class="btn">🤖 Check Matches</a>
+<a href="match.html">🤖 Check Matches</a>
 
-<a href="index.html" class="btn logout">🚪 Logout</a>
+<a href="index.html" class="logout">🚪 Logout</a>
 
 </div>
 
