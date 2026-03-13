@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Submitted Found Items</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+</head>
+
+<body>
+
+<h2 style="text-align:center;">Submitted Found Items</h2>
+
+<div id="foundItemsList"></div>
+
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+  authDomain: "intellifinds-19f97.firebaseapp.com",
+  databaseURL: "https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "intellifinds-19f97",
+  storageBucket: "intellifinds-19f97.appspot.com",
+  messagingSenderId: "910756623728",
+  appId: "1:910756623728:web:8ab55db46a984c75860bb5"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+
+db.ref("foundItems").on("value", function(snapshot){
+
+let data = snapshot.val();
+let html = "";
+
+for(let id in data){
+
+html += `
+<div class="card" style="width:300px;margin:20px auto;text-align:left;">
+
+<h3>Found Item</h3>
+
+<p><b>Item:</b> ${data[id].name}</p>
+
+<p><b>Description:</b> ${data[id].description}</p>
+
+<p><b>Location:</b> ${data[id].location}</p>
+
+<hr>
+
+</div>
+`;
+
+}
+
+document.getElementById("foundItemsList").innerHTML = html;
+
+});
+
+</script>
+
+</body>
+</html>
