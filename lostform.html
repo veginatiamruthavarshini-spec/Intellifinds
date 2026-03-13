@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <title>Report Lost Item</title>
@@ -8,6 +9,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 </head>
 
@@ -24,6 +26,8 @@
 
 <input type="text" id="location" placeholder="Location Lost"><br><br>
 
+<input type="file" id="photo"><br><br>
+
 <button onclick="submitLost()" class="btn">Submit</button>
 
 </div>
@@ -33,39 +37,53 @@
 <script>
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-  authDomain: "intellifinds-19f97.firebaseapp.com",
-  databaseURL: "https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "intellifinds-19f97",
-  storageBucket: "intellifinds-19f97.appspot.com",
-  messagingSenderId: "910756623728",
-  appId: "1:910756623728:web:8ab55db46a984c75860bb5"
+apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain: "intellifinds-19f97.firebaseapp.com",
+databaseURL: "https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "intellifinds-19f97",
+storageBucket: "intellifinds-19f97.appspot.com",
+messagingSenderId: "910756623728",
+appId: "1:910756623728:web:8ab55db46a984c75860bb5"
 };
 
 firebase.initializeApp(firebaseConfig);
 
 const db = firebase.database();
+const storage = firebase.storage();
+
 
 function submitLost(){
-
-console.log("Submit button clicked");
 
 const name = document.getElementById("itemname").value;
 const desc = document.getElementById("description").value;
 const loc = document.getElementById("location").value;
 
-firebase.database().ref("lostItems").push({
+const file = document.getElementById("photo").files[0];
+
+const storageRef = storage.ref("lostPhotos/" + file.name);
+
+storageRef.put(file).then(function(snapshot){
+
+snapshot.ref.getDownloadURL().then(function(url){
+
+db.ref("lostItems").push({
+
 name: name,
 description: desc,
-location: loc
+location: loc,
+image: url
+
 });
 
 alert("Lost item submitted successfully");
 
-window.location = "viewlost.html";
+window.location="viewlost.html";
+
+});
+
+});
 
 }
-
 
 </script>
 
