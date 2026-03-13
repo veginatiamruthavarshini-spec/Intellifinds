@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 
@@ -7,37 +8,52 @@
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 background:#a9bdd6;
-margin:0;
-padding:0;
-}
-
-.container{
-max-width:900px;
-margin:auto;
 padding:40px;
 }
 
 h1{
 text-align:center;
+margin-bottom:30px;
+}
+
+.container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
 }
 
 .card{
 background:white;
 padding:20px;
-margin:20px 0;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.2);
+border-radius:12px;
+width:280px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
-button{
-padding:10px 20px;
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.score{
+font-weight:bold;
+color:#2f66e0;
+}
+
+.backbtn{
+display:block;
+width:200px;
+margin:40px auto;
+text-align:center;
+padding:10px;
 background:#2f66e0;
 color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
+text-decoration:none;
+border-radius:8px;
 }
 
 </style>
@@ -46,19 +62,11 @@ cursor:pointer;
 
 <body>
 
-<div class="container">
-
 <h1>AI Matching Results</h1>
 
-<div id="matchList"></div>
+<div class="container" id="matchList"></div>
 
-<br>
-
-<a href="dashboard321.html">
-<button>Back to Dashboard</button>
-</a>
-
-</div>
+<a class="backbtn" href="dashboard321.html">Back to Dashboard</a>
 
 <script type="module">
 
@@ -66,82 +74,67 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-authDomain: "intellifinds-19f97.firebaseapp.com",
-projectId: "intellifinds-19f97",
-storageBucket: "intellifinds-19f97.appspot.com",
-messagingSenderId: "910756623728",
-appId: "1:910756623728:web:8ab55db46a984c75860bb5"
+apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain:"intellifinds-19f97.firebaseapp.com",
+projectId:"intellifinds-19f97",
+storageBucket:"intellifinds-19f97.appspot.com",
+messagingSenderId:"910756623728",
+appId:"1:910756623728:web:8ab55db46a984c75860bb5",
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const matchList = document.getElementById("matchList");
+const container=document.getElementById("matchList");
+
+function similarity(a,b){
+
+a=a.toLowerCase();
+b=b.toLowerCase();
+
+if(a===b) return 100;
+
+let score=0;
+
+if(a.includes(b) || b.includes(a)) score+=50;
+
+const wordsA=a.split(" ");
+const wordsB=b.split(" ");
+
+wordsA.forEach(word=>{
+if(wordsB.includes(word)) score+=10;
+});
+
+return Math.min(score,100);
+
+}
 
 async function findMatches(){
 
-const lostSnapshot = await get(ref(db,"lostItems"));
-const foundSnapshot = await get(ref(db,"foundItems"));
+const lostSnap=await get(ref(db,"lostItems"));
+const foundSnap=await get(ref(db,"foundItems"));
 
-const lostItems = [];
-const foundItems = [];
+const lostItems=[];
+const foundItems=[];
 
-lostSnapshot.forEach(child=>{
+lostSnap.forEach(child=>{
 lostItems.push(child.val());
 });
 
-foundSnapshot.forEach(child=>{
+foundSnap.forEach(child=>{
 foundItems.push(child.val());
 });
 
-lostItems.forEach(lost => {
+lostItems.forEach(lost=>{
 
-foundItems.forEach(found => {
+foundItems.forEach(found=>{
 
-let score = 0;
+const itemScore=similarity(lost.item,found.item);
+const descScore=similarity(lost.description,found.description);
 
-if(lost.item.toLowerCase() === found.item.toLowerCase())
-score += 60;
+const totalScore=Math.round((itemScore+descScore)/2);
 
-if(lost.description.toLowerCase() === found.description.toLowerCase())
-score += 30;
+if(totalScore>=50){
 
-if(lost.location.toLowerCase() === found.location.toLowerCase())
-score += 10;
-
-if(score >= 60){
-
-const div = document.createElement("div");
-div.className = "card";
-
-div.innerHTML = `
-<h3>Match Found</h3>
-
-<p><b>Lost Item:</b> ${lost.item}</p>
-<p><b>Found Item:</b> ${found.item}</p>
-
-<p><b>Lost Description:</b> ${lost.description}</p>
-<p><b>Found Description:</b> ${found.description}</p>
-
-<p><b>Location:</b> ${lost.location}</p>
-
-<h3>Match Score: ${score}%</h3>
-`;
-
-matchList.appendChild(div);
-
-}
-
-});
-
-});
-
-}
-
-findMatches();
-
-</script>
-
-</body>
-</html>
+const card=document.c
