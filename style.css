@@ -1,30 +1,60 @@
-.dashboard-buttons{
+body{
+font-family: Arial, sans-serif;
+background:#a9bdd6;
+margin:0;
+height:100vh;
 display:flex;
-flex-direction:column;
-gap:15px;
-margin-top:25px;
+justify-content:center;
+align-items:center;
 }
 
-.dashboard-buttons .btn{
-display:block;
+.container{
+display:flex;
+justify-content:center;
+align-items:center;
 width:100%;
-padding:14px;
+}
+
+.card{
+background:#f2f2f2;
+padding:40px;
+border-radius:20px;
+width:420px;
+text-align:center;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+
+.subtitle{
+color:#444;
+margin-bottom:25px;
+}
+
+.role-buttons{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:20px;
+}
+
+.btn{
+padding:12px 20px;
 background:#2f66e0;
 color:white;
 text-decoration:none;
 border-radius:10px;
-text-align:center;
 font-weight:bold;
+transition:0.3s;
 }
 
-.dashboard-buttons .btn:hover{
+.btn:hover{
 background:#1d4ed8;
+transform:scale(1.05);
 }
 
-.logout{
-background:#e53935 !important;
+.police{
+background:#e53935;
 }
 
-.logout:hover{
-background:#c62828 !important;
+.police:hover{
+background:#c62828;
 }
