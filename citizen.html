@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Citizen Login - IntelliFind</title>
+
 <link rel="stylesheet" href="style.css">
+
+<!-- Firebase libraries -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
 </head>
+
 
 <body>
 
@@ -19,7 +28,9 @@
 <input type="password" id="password" placeholder="Enter Password"><br><br>
 
 <button onclick="register()" class="btn">Register</button>
+
 <br><br>
+
 <button onclick="login()" class="btn">Login</button>
 
 <br><br>
@@ -30,10 +41,7 @@
 </div>
 
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<script>
 
 const firebaseConfig = {
   apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
@@ -44,34 +52,40 @@ const firebaseConfig = {
   appId: "1:910756623728:web:8ab55db46a984c75860bb5"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 
-window.register = function(){
+firebase.initializeApp(firebaseConfig);
+
+
+function register(){
 
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
-createUserWithEmailAndPassword(auth,email,password)
+firebase.auth().createUserWithEmailAndPassword(email,password)
+
 .then(()=>{
 alert("Registration Successful");
 })
+
 .catch((error)=>{
 alert(error.message);
 });
 
 }
 
-window.login = function(){
+
+function login(){
 
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
-signInWithEmailAndPassword(auth,email,password)
+firebase.auth().signInWithEmailAndPassword(email,password)
+
 .then(()=>{
 alert("Login Successful");
 window.location="lostform.html";
 })
+
 .catch((error)=>{
 alert(error.message);
 });
@@ -79,6 +93,7 @@ alert(error.message);
 }
 
 </script>
+
 
 </body>
 </html>
