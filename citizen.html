@@ -1,27 +1,23 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-
 <title>Citizen Login</title>
 
 <style>
 
-body{
-font-family: Arial, sans-serif;
-background:#a9bdd6;
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, sans-serif;
+background:#a9bdd6;
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-}
-
-.container{
-display:flex;
-justify-content:center;
-align-items:center;
-width:100%;
 }
 
 .card{
@@ -33,30 +29,33 @@ text-align:center;
 box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
 
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:6px;
-border:1px solid #ccc;
-box-sizing:border-box;
+.card h2{
+margin-bottom:20px;
 }
 
-.btn{
-display:block;
+input{
 width:100%;
 padding:12px;
-margin-top:15px;
+margin:10px 0;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:14px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
 background:#2f66e0;
 color:white;
-text-decoration:none;
 border:none;
-border-radius:10px;
+border-radius:8px;
+font-size:16px;
 font-weight:bold;
 cursor:pointer;
 }
 
-.btn:hover{
+button:hover{
 background:#1d4ed8;
 }
 
@@ -65,6 +64,7 @@ display:block;
 margin-top:20px;
 color:#2f66e0;
 text-decoration:none;
+font-weight:bold;
 }
 
 </style>
@@ -72,8 +72,6 @@ text-decoration:none;
 </head>
 
 <body>
-
-<div class="container">
 
 <div class="card">
 
@@ -83,16 +81,63 @@ text-decoration:none;
 
 <input type="password" id="password" placeholder="Enter Password">
 
-<button onclick="register()" class="btn">Register</button>
+<button onclick="register()">Register</button>
 
-<button onclick="login()" class="btn">Login</button>
+<button onclick="login()">Login</button>
 
 <a href="index.html" class="home">Back to Home</a>
 
 </div>
 
-</div>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain: "intellifinds-19f97.firebaseapp.com",
+projectId: "intellifinds-19f97",
+storageBucket: "intellifinds-19f97.appspot.com",
+messagingSenderId: "910756623728",
+appId: "1:910756623728:web:8ab55db46a984c75860bb5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.register = function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+createUserWithEmailAndPassword(auth,email,password)
+.then(()=>{
+alert("Registration Successful");
+})
+.catch((error)=>{
+alert(error.message);
+});
+
+}
+
+window.login = function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth,email,password)
+.then(()=>{
+alert("Login Successful");
+window.location="dashboard321.html";
+})
+.catch((error)=>{
+alert(error.message);
+});
+
+}
+
+</script>
 
 </body>
-
 </html>
