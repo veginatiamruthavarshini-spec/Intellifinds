@@ -1,117 +1,145 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 
-<title>Possible Matches</title>
+<title>AI Match Results</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+body{
+font-family: Arial;
+background:#a9bdd6;
+margin:0;
+padding:0;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+h1{
+text-align:center;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:20px 0;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+button{
+padding:10px 20px;
+background:#2f66e0;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<h2 style="text-align:center;">Possible Lost-Found Matches</h2>
+<div class="container">
+
+<h1>AI Matching Results</h1>
 
 <div id="matchList"></div>
-  <br><br>
 
-<a href="dashboard321.html" class="btn">Back to Dashboard</a>
+<br>
 
-<script>
+<a href="dashboard321.html">
+<button>Back to Dashboard</button>
+</a>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
 authDomain: "intellifinds-19f97.firebaseapp.com",
-databaseURL: "https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId: "intellifinds-19f97",
 storageBucket: "intellifinds-19f97.appspot.com",
 messagingSenderId: "910756623728",
 appId: "1:910756623728:web:8ab55db46a984c75860bb5"
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db = firebase.database();
+const matchList = document.getElementById("matchList");
 
+async function findMatches(){
 
-function similarity(str1,str2){
+const lostSnapshot = await get(ref(db,"lostItems"));
+const foundSnapshot = await get(ref(db,"foundItems"));
 
-str1 = str1.toLowerCase();
-str2 = str2.toLowerCase();
+const lostItems = [];
+const foundItems = [];
 
-let words1 = str1.split(" ");
-let words2 = str2.split(" ");
+lostSnapshot.forEach(child=>{
+lostItems.push(child.val());
+});
 
-let match = 0;
+foundSnapshot.forEach(child=>{
+foundItems.push(child.val());
+});
 
-for(let w1 of words1){
-for(let w2 of words2){
-if(w1 === w2){
-match++;
-}
-}
-}
+lostItems.forEach(lost => {
 
-return (match / Math.max(words1.length,words2.length))*100;
+foundItems.forEach(found => {
 
-}
+let score = 0;
 
+if(lost.item.toLowerCase() === found.item.toLowerCase())
+score += 60;
 
-db.ref("lostItems").once("value", function(lostSnapshot){
+if(lost.description.toLowerCase() === found.description.toLowerCase())
+score += 30;
 
-db.ref("foundItems").once("value", function(foundSnapshot){
+if(lost.location.toLowerCase() === found.location.toLowerCase())
+score += 10;
 
-let lost = lostSnapshot.val();
-let found = foundSnapshot.val();
+if(score >= 60){
 
-let html = "";
+const div = document.createElement("div");
+div.className = "card";
 
-for(let l in lost){
+div.innerHTML = `
+<h3>Match Found</h3>
 
-for(let f in found){
+<p><b>Lost Item:</b> ${lost.item}</p>
+<p><b>Found Item:</b> ${found.item}</p>
 
-let lostText = lost[l].name + " " + lost[l].description;
-let foundText = found[f].name + " " + found[f].description;
+<p><b>Lost Description:</b> ${lost.description}</p>
+<p><b>Found Description:</b> ${found.description}</p>
 
-let score = similarity(lostText,foundText);
+<p><b>Location:</b> ${lost.location}</p>
 
-if(score >= 50){
-
-html += `
-
-<div class="card" style="width:350px;margin:20px auto;text-align:left;">
-
-<h3>Possible Match</h3>
-
-<p><b>Lost Item:</b> ${lost[l].name}</p>
-<p><b>Lost Description:</b> ${lost[l].description}</p>
-
-<p><b>Found Item:</b> ${found[f].name}</p>
-<p><b>Found Description:</b> ${found[f].description}</p>
-
-<p><b>Match Score:</b> ${score.toFixed(0)}%</p>
-
-<hr>
-
-</div>
-
+<h3>Match Score: ${score}%</h3>
 `;
 
-}
+matchList.appendChild(div);
 
 }
-
-}
-
-document.getElementById("matchList").innerHTML = html;
 
 });
 
 });
+
+}
+
+findMatches();
 
 </script>
 
