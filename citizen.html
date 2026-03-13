@@ -1,99 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Citizen Login - IntelliFind</title>
+<title>Citizen Login</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
 
-<!-- Firebase libraries -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+body{
+font-family: Arial, sans-serif;
+background:#a9bdd6;
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+display:flex;
+justify-content:center;
+align-items:center;
+width:100%;
+}
+
+.card{
+background:#f2f2f2;
+padding:40px;
+border-radius:20px;
+width:350px;
+text-align:center;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:6px;
+border:1px solid #ccc;
+box-sizing:border-box;
+}
+
+.btn{
+display:block;
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#2f66e0;
+color:white;
+text-decoration:none;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btn:hover{
+background:#1d4ed8;
+}
+
+.home{
+display:block;
+margin-top:20px;
+color:#2f66e0;
+text-decoration:none;
+}
+
+</style>
 
 </head>
-
 
 <body>
 
 <div class="container">
+
 <div class="card">
 
 <h2>Citizen Login</h2>
 
-<input type="email" id="email" placeholder="Enter Email"><br><br>
+<input type="email" id="email" placeholder="Enter Email">
 
-<input type="password" id="password" placeholder="Enter Password"><br><br>
+<input type="password" id="password" placeholder="Enter Password">
 
 <button onclick="register()" class="btn">Register</button>
 
-<br><br>
-
 <button onclick="login()" class="btn">Login</button>
 
-<br><br>
-
-<a href="index.html" class="btn">Back to Home</a>
+<a href="index.html" class="home">Back to Home</a>
 
 </div>
+
 </div>
-
-
-<script>
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-  authDomain: "intellifinds-19f97.firebaseapp.com",
-  projectId: "intellifinds-19f97",
-  storageBucket: "intellifinds-19f97.appspot.com",
-  messagingSenderId: "910756623728",
-  appId: "1:910756623728:web:8ab55db46a984c75860bb5"
-};
-
-
-firebase.initializeApp(firebaseConfig);
-
-
-function register(){
-
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-firebase.auth().createUserWithEmailAndPassword(email,password)
-
-.then(()=>{
-alert("Registration Successful");
-})
-
-.catch((error)=>{
-alert(error.message);
-});
-
-}
-
-
-function login(){
-
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-firebase.auth().signInWithEmailAndPassword(email,password)
-
-.then(()=>{
-alert("Login Successful");
-window.location="dashboard321.html";
-})
-
-.catch((error)=>{
-alert(error.message);
-});
-
-}
-
-</script>
-
 
 </body>
+
 </html>
