@@ -1,3 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+<title>AI Match Results</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#a9bdd6;
+padding:40px;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+.container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+width:280px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.message{
+text-align:center;
+font-size:18px;
+margin-top:40px;
+}
+
+.backbtn{
+display:block;
+width:200px;
+margin:40px auto;
+text-align:center;
+padding:10px;
+background:#2f66e0;
+color:white;
+text-decoration:none;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>AI Matching Results</h1>
+
+<div class="container" id="matchList"></div>
+
+<div id="msg" class="message"></div>
+
+<a class="backbtn" href="dashboard321.html">Back to Dashboard</a>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -17,40 +90,40 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const container = document.getElementById("matchList");
+const msg = document.getElementById("msg");
 
 async function findMatches(){
 
 const lostSnap = await get(ref(db,"lostItems"));
 const foundSnap = await get(ref(db,"foundItems"));
 
-lostSnap.forEach(lostChild => {
+if(!lostSnap.exists() || !foundSnap.exists()){
+msg.innerText="No matches found.";
+return;
+}
+
+let matchFound=false;
+
+lostSnap.forEach(lostChild=>{
 
 const lost = lostChild.val();
 
-foundSnap.forEach(foundChild => {
+foundSnap.forEach(foundChild=>{
 
 const found = foundChild.val();
 
-let match = false;
+const lostItem = (lost.item || "").toLowerCase();
+const foundItem = (found.item || "").toLowerCase();
 
-const lostItem = lost.item.toLowerCase();
-const foundItem = found.item.toLowerCase();
+if(lostItem && foundItem && (lostItem === foundItem || foundItem.includes(lostItem))){
 
-const lostDesc = lost.description.toLowerCase();
-const foundDesc = found.description.toLowerCase();
+matchFound=true;
 
-if(lostItem === foundItem)
-match = true;
+const card=document.createElement("div");
+card.className="card";
 
-if(foundDesc.includes(lostItem) || lostDesc.includes(foundItem))
-match = true;
+card.innerHTML=`
 
-if(match){
-
-const card = document.createElement("div");
-card.className = "card";
-
-card.innerHTML = `
 <h3>Match Found</h3>
 
 <img src="${lost.photo || ''}">
@@ -59,8 +132,8 @@ card.innerHTML = `
 <img src="${found.photo || ''}">
 <p><b>Found Item:</b> ${found.item}</p>
 
-<p><b>Lost Location:</b> ${lost.location}</p>
-<p><b>Found Location:</b> ${found.location}</p>
+<p><b>Location:</b> ${lost.location}</p>
+
 `;
 
 container.appendChild(card);
@@ -71,8 +144,15 @@ container.appendChild(card);
 
 });
 
+if(!matchFound){
+msg.innerText="No matches found.";
+}
+
 }
 
 findMatches();
 
 </script>
+
+</body>
+</html>
