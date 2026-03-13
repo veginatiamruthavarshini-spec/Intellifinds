@@ -1,62 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Report Lost Item</title>
+<title>Lost Items</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#a9bdd6;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+margin:0;
+}
+
+.container{
+max-width:800px;
+margin:auto;
+padding:40px;
 }
 
 .card{
 background:white;
-padding:30px;
-border-radius:15px;
-width:350px;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-text-align:center;
+padding:20px;
+margin:20px 0;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
-
-input{
-width:100%;
-padding:10px;
-margin:10px 0;
-}
-
-button{
-padding:10px 20px;
-background:#2f66e0;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
 </style>
 
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
 
-<h2>Report Lost Item</h2>
+<h1>Submitted Lost Items</h1>
 
-<input type="text" id="item" placeholder="Item Name">
-
-<input type="text" id="description" placeholder="Description">
-
-<input type="text" id="location" placeholder="Location Lost">
-
-<button onclick="submitLost()">Submit</button>
-
-<br><br>
+<div id="lostList"></div>
 
 <a href="dashboard321.html">Back to Dashboard</a>
 
@@ -65,35 +42,46 @@ cursor:pointer;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-authDomain: "intellifinds-19f97.firebaseapp.com",
-projectId: "intellifinds-19f97",
-storageBucket: "intellifinds-19f97.appspot.com",
-messagingSenderId: "910756623728",
-appId: "1:910756623728:web:8ab55db46a984c75860bb5"
+apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain:"intellifinds-19f97.firebaseapp.com",
+projectId:"intellifinds-19f97",
+storageBucket:"intellifinds-19f97.appspot.com",
+messagingSenderId:"910756623728",
+appId:"1:910756623728:web:8ab55db46a984c75860bb5"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-window.submitLost = function(){
+const lostRef = ref(db,"lostItems");
 
-const item=document.getElementById("item").value;
-const description=document.getElementById("description").value;
-const location=document.getElementById("location").value;
+onValue(lostRef,(snapshot)=>{
 
-push(ref(db,"lostItems"),{
-item:item,
-description:description,
-location:location
+const list = document.getElementById("lostList");
+list.innerHTML="";
+
+snapshot.forEach(child=>{
+
+const data = child.val();
+
+const div=document.createElement("div");
+div.className="card";
+
+div.innerHTML=`
+<h3>Lost Item</h3>
+<p><b>Item:</b> ${data.item}</p>
+<p><b>Description:</b> ${data.description}</p>
+<p><b>Location:</b> ${data.location}</p>
+`;
+
+list.appendChild(div);
+
 });
 
-alert("Lost Item Submitted");
-
-}
+});
 
 </script>
 
