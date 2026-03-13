@@ -13,6 +13,7 @@ display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
+margin:0;
 }
 
 .card{
@@ -28,6 +29,8 @@ input{
 width:100%;
 padding:10px;
 margin:10px 0;
+border-radius:5px;
+border:1px solid #ccc;
 }
 
 button{
@@ -37,6 +40,10 @@ color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
+}
+
+button:hover{
+background:#1f4fb3;
 }
 
 </style>
@@ -69,22 +76,22 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-authDomain:"intellifinds-19f97.firebaseapp.com",
-projectId:"intellifinds-19f97",
-storageBucket:"intellifinds-19f97.appspot.com",
-messagingSenderId:"910756623728",
-appId:"1:910756623728:web:8ab55db46a984c75860bb5"
+apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain: "intellifinds-19f97.firebaseapp.com",
+projectId: "intellifinds-19f97",
+storageBucket: "intellifinds-19f97.appspot.com",
+messagingSenderId: "910756623728",
+appId: "1:910756623728:web:8ab55db46a984c75860bb5"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-window.submitLost=function(){
+window.submitLost = function(){
 
-const item=document.getElementById("item").value;
-const description=document.getElementById("description").value;
-const location=document.getElementById("location").value;
+const item = document.getElementById("item").value;
+const description = document.getElementById("description").value;
+const location = document.getElementById("location").value;
 
 push(ref(db,"lostItems"),{
 item:item,
@@ -92,7 +99,9 @@ description:description,
 location:location
 });
 
-alert("Lost Item Submitted");
+alert("Lost Item Submitted Successfully");
+
+window.location.href = "viewlost.html";
 
 }
 
