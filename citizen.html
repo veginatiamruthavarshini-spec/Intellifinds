@@ -1,22 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Citizen Login - IntelliFind</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citizen Login - IntelliFind</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="container">
-    <div class="card">
-      <h2>Citizen Login</h2>
-      <p>This page is for citizens to log in and report lost or found items.</p>
-      <div class="buttons">
-        <a href="lostform.html" class="btn">Report Lost Item</a>
-        <a href="foundform.html" class="btn">Report Found Item</a>
-        <a href="index.html" class="btn">Back to Home</a>
-      </div>
-    </div>
-  </div>
+
+<div class="container">
+<div class="card">
+
+<h2>Citizen Login</h2>
+
+<input type="email" id="email" placeholder="Enter Email"><br><br>
+
+<input type="password" id="password" placeholder="Enter Password"><br><br>
+
+<button onclick="register()" class="btn">Register</button>
+<br><br>
+<button onclick="login()" class="btn">Login</button>
+
+<br><br>
+
+<a href="index.html" class="btn">Back to Home</a>
+
+</div>
+</div>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+  authDomain: "intellifinds-19f97.firebaseapp.com",
+  projectId: "intellifinds-19f97",
+  storageBucket: "intellifinds-19f97.appspot.com",
+  messagingSenderId: "910756623728",
+  appId: "1:910756623728:web:8ab55db46a984c75860bb5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.register = function(){
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+createUserWithEmailAndPassword(auth,email,password)
+.then(()=>{
+alert("Registration Successful");
+})
+.catch((error)=>{
+alert(error.message);
+});
+
+}
+
+window.login = function(){
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth,email,password)
+.then(()=>{
+alert("Login Successful");
+window.location="lostform.html";
+})
+.catch((error)=>{
+alert(error.message);
+});
+
+}
+
+</script>
+
 </body>
 </html>
