@@ -1,43 +1,67 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-<title>Lost Items</title>
+
+<title>Submitted Lost Items</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#a9bdd6;
-margin:0;
+padding:40px;
+}
+
+h1{
+text-align:center;
 }
 
 .container{
-max-width:800px;
-margin:auto;
-padding:40px;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
+margin-top:40px;
 }
 
 .card{
 background:white;
 padding:20px;
-margin:20px 0;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.2);
+border-radius:12px;
+width:260px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
+
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.back{
+display:block;
+margin:30px auto;
+width:200px;
+text-align:center;
+padding:10px;
+background:#2f66e0;
+color:white;
+border-radius:6px;
+text-decoration:none;
+}
+
 </style>
 
 </head>
 
 <body>
 
-<div class="container">
-
 <h1>Submitted Lost Items</h1>
 
-<div id="lostList"></div>
+<div class="container" id="lostList"></div>
 
-<a href="dashboard321.html">Back to Dashboard</a>
-
-</div>
+<a class="back" href="dashboard321.html">Back to Dashboard</a>
 
 <script type="module">
 
@@ -50,34 +74,36 @@ authDomain:"intellifinds-19f97.firebaseapp.com",
 projectId:"intellifinds-19f97",
 storageBucket:"intellifinds-19f97.appspot.com",
 messagingSenderId:"910756623728",
-appId:"1:910756623728:web:8ab55db46a984c75860bb5"
+appId:"1:910756623728:web:8ab55db46a984c75860bb5",
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const lostRef = ref(db,"lostItems");
+const list=document.getElementById("lostList");
 
-onValue(lostRef,(snapshot)=>{
+onValue(ref(db,"lostItems"),(snapshot)=>{
 
-const list = document.getElementById("lostList");
 list.innerHTML="";
 
 snapshot.forEach(child=>{
 
-const data = child.val();
+const data=child.val();
 
-const div=document.createElement("div");
-div.className="card";
+list.innerHTML+=`
 
-div.innerHTML=`
-<h3>Lost Item</h3>
+<div class="card">
+
+<img src="${data.photo || ''}">
+
 <p><b>Item:</b> ${data.item}</p>
 <p><b>Description:</b> ${data.description}</p>
 <p><b>Location:</b> ${data.location}</p>
-`;
 
-list.appendChild(div);
+</div>
+
+`;
 
 });
 
