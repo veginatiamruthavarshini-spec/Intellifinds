@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+
+<title>Police Verification Panel</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#a9bdd6;
+padding:40px;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+.container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+width:260px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card img{
+width:100%;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+button{
+padding:8px 14px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-right:10px;
+}
+
+.verify{
+background:#28a745;
+color:white;
+}
+
+.reject{
+background:#dc3545;
+color:white;
+}
+
+.back{
+display:block;
+width:200px;
+margin:40px auto;
+text-align:center;
+padding:10px;
+background:#2f66e0;
+color:white;
+text-decoration:none;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Police Verification Panel</h1>
+
+<div class="container" id="matchList"></div>
+
+<a class="back" href="index.html">Logout</a>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain:"intellifinds-19f97.firebaseapp.com",
+projectId:"intellifinds-19f97",
+storageBucket:"intellifinds-19f97.appspot.com",
+messagingSenderId:"910756623728",
+appId:"1:910756623728:web:8ab55db46a984c75860bb5",
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const container=document.getElementById("matchList");
+
+window.verifyItem = async function(id){
+
+await update(ref(db,"lostItems/"+id),{
+status:"Verified by Police"
+});
+
+alert("Item Verified");
+
+location.reload();
+
+}
+
+window.rejectItem = async function(id){
+
+await update(ref(db,"lostItems/"+id),{
+status:"Rejected by Police"
+});
+
+alert("Item Rejected");
+
+location.reload();
+
+}
+
+async function loadMatches(){
+
+const lostSnapshot = await get(ref(db,"lostItems"));
+const foundSnapshot = await get(ref(db,"foundItems"));
+
+lostSnapshot.forEach(lostChild=>{
+
+const lost = lostChild.val();
+
+foundSnapshot.forEach(foundChild=>{
+
+const found = foundChild.val();
+
+const lostItem=(lost.item || "").toLowerCase();
+const foundItem=(found.item || "").toLowerCase();
+
+if(lostItem && foundItem && lostItem===foundItem){
+
+const card=document.createElement("div");
+card.className="card";
+
+card.innerHTML=`
+
+<h3>Match Found</h3>
+
+<img src="${lost.photo || ''}">
+<p><b>Lost Item:</b> ${lost.item}</p>
+
+<img src="${found.photo || ''}">
+<p><b>Found Item:</b> ${found.item}</p>
+
+<button class="verify" onclick="verifyItem('${lostChild.key}')">Verify</button>
+
+<button class="reject" onclick="rejectItem('${lostChild.key}')">Reject</button>
+
+`;
+
+container.appendChild(card);
+
+}
+
+});
+
+});
+
+}
+
+loadMatches();
+
+</script>
+
+</body>
+</html>
