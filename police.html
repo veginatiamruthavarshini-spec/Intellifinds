@@ -1,21 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Police Login - IntelliFind</title>
-  <link rel="stylesheet" href="style.css">
+
+<title>Police Login</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#a9bdd6;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+width:320px;
+text-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+}
+
+button{
+padding:10px 20px;
+background:#2f66e0;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+
 </head>
+
 <body>
-  <div class="container">
-    <div class="card">
-      <h2>Police Login</h2>
-      <p>This page is for police verification and case handling.</p>
-      <div class="buttons">
-        <a href="dashboard.html" class="btn">Go to Dashboard</a>
-        <a href="index.html" class="btn">Back to Home</a>
-      </div>
-    </div>
-  </div>
+
+<div class="card">
+
+<h2>Police Login</h2>
+
+<input type="text" id="username" placeholder="Police ID">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+</div>
+
+<script>
+
+function login(){
+
+const user=document.getElementById("username").value;
+const pass=document.getElementById("password").value;
+
+if(user==="police" && pass==="1234"){
+
+window.location="policedashboard.html";
+
+}else{
+
+alert("Invalid Police Credentials");
+
+}
+
+}
+
+</script>
+
 </body>
 </html>
