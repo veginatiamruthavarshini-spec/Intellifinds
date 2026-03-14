@@ -1,83 +1,90 @@
 <!DOCTYPE html>
-
 <html>
 <head>
+  <title>Police Login</title>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#a9bdd6;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      margin:0;
+    }
 
-<title>Police Login</title>
+    .card{
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      width:340px;
+      text-align:center;
+      box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    }
 
-<style>
+    input{
+      width:100%;
+      padding:10px;
+      margin:10px 0;
+      box-sizing:border-box;
+      border:1px solid #ccc;
+      border-radius:6px;
+    }
 
-body{
-font-family:Arial;
-background:#a9bdd6;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
+    button{
+      width:100%;
+      padding:10px;
+      background:#2f66e0;
+      color:white;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      margin-top:10px;
+      font-weight:bold;
+    }
 
-.card{
-background:white;
-padding:30px;
-border-radius:12px;
-width:320px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
+    button:hover{
+      background:#1d4ed8;
+    }
 
-input{
-width:100%;
-padding:10px;
-margin:10px 0;
-}
-
-button{
-padding:10px 20px;
-background:#2f66e0;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-</style>
-
+    .back{
+      display:block;
+      margin-top:15px;
+      text-decoration:none;
+      color:#2f66e0;
+      font-weight:bold;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="card">
+  <div class="card">
+    <h2>Police Login</h2>
 
-<h2>Police Login</h2>
+    <input type="text" id="policeId" placeholder="Enter Police ID">
+    <input type="password" id="policePassword" placeholder="Enter Password">
 
-<input type="text" id="username" placeholder="Police ID">
+    <button onclick="loginPolice()">Login</button>
 
-<input type="password" id="password" placeholder="Password">
+    <a href="index.html" class="back">Back to Home</a>
+  </div>
 
-<button onclick="login()">Login</button>
+  <script>
+    function loginPolice() {
+      const policeId = document.getElementById("policeId").value.trim();
+      const policePassword = document.getElementById("policePassword").value.trim();
 
-</div>
+      const correctPoliceId = "CMRPOLICE01";
+      const correctPassword = "police123";
 
-<script>
-
-function login(){
-
-const user=document.getElementById("username").value;
-const pass=document.getElementById("password").value;
-
-if(user==="police" && pass==="1234"){
-
-window.location="policedashboard.html";
-
-}else{
-
-alert("Invalid Police Credentials");
-
-}
-
-}
-
-</script>
+      if (policeId === correctPoliceId && policePassword === correctPassword) {
+        alert("Police Login Successful");
+        window.location.href = "policedashboard.html";
+      } else {
+        alert("Invalid Police ID or Password");
+      }
+    }
+  </script>
 
 </body>
 </html>
