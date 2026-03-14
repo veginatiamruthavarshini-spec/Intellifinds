@@ -39,6 +39,11 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
+.status{
+font-weight:bold;
+color:#2f66e0;
+}
+
 .backbtn{
 display:block;
 width:200px;
@@ -91,14 +96,23 @@ snapshot.forEach(child=>{
 
 const data=child.val();
 
+if(!data.item) return;
+
 const card=document.createElement("div");
 card.className="card";
 
 card.innerHTML=`
+
 <img src="${data.photo || ''}">
+
 <p><b>Item:</b> ${data.item}</p>
+
 <p><b>Description:</b> ${data.description}</p>
+
 <p><b>Location:</b> ${data.location}</p>
+
+<p class="status"><b>Status:</b> ${data.status || "Waiting for Police Verification"}</p>
+
 `;
 
 list.appendChild(card);
