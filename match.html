@@ -28,7 +28,7 @@ justify-content:center;
 .card{
 background:white;
 padding:20px;
-width:320px;
+width:300px;
 border-radius:12px;
 box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
@@ -39,21 +39,6 @@ height:200px;
 object-fit:cover;
 border-radius:10px;
 margin-bottom:10px;
-}
-
-button{
-padding:8px 15px;
-background:#2f66e0;
-border:none;
-color:white;
-border-radius:6px;
-cursor:pointer;
-margin-top:10px;
-margin-right:10px;
-}
-
-.reject{
-background:red;
 }
 
 .backbtn{
@@ -84,7 +69,7 @@ font-weight:bold;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
@@ -120,7 +105,6 @@ container.innerHTML="";
 snapshot.forEach(child=>{
 
 const lost=child.val();
-const lostKey=child.key;
 
 foundItems.forEach(found=>{
 
@@ -141,21 +125,18 @@ card.innerHTML=`
 <img src="${lost.photo || ''}">
 
 <p><b>Lost Item:</b> ${lost.item}</p>
-<p><b>Owner Name:</b> ${lost.name || 'N/A'}</p>
-<p><b>Owner Phone:</b> ${lost.phone || 'N/A'}</p>
-<p><b>Owner Email:</b> ${lost.email || 'N/A'}</p>
+<p><b>Description:</b> ${lost.description}</p>
+<p><b>Location:</b> ${lost.location}</p>
 
 <hr>
 
 <img src="${found.photo || ''}">
 
 <p><b>Found Item:</b> ${found.item}</p>
-<p><b>Finder Name:</b> ${found.name || 'N/A'}</p>
-<p><b>Finder Phone:</b> ${found.phone || 'N/A'}</p>
-<p><b>Finder Email:</b> ${found.email || 'N/A'}</p>
+<p><b>Description:</b> ${found.description}</p>
+<p><b>Location:</b> ${found.location}</p>
 
-<button onclick="verifyItem('${lostKey}')">Verify</button>
-<button class="reject" onclick="rejectItem('${lostKey}')">Reject</button>
+<p><b>Status:</b> Waiting for Police Verification</p>
 
 `;
 
@@ -168,26 +149,6 @@ container.appendChild(card);
 });
 
 });
-
-window.verifyItem=async function(id){
-
-await update(ref(db,"lostItems/"+id),{
-status:"Verified by Police"
-});
-
-alert("Item Verified");
-
-}
-
-window.rejectItem=async function(id){
-
-await update(ref(db,"lostItems/"+id),{
-status:"Rejected by Police"
-});
-
-alert("Item Rejected");
-
-}
 
 </script>
 
