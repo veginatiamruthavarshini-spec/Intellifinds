@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-
-<title>Submitted Lost Items</title>
+<title>View Lost Items</title>
 
 <style>
 
@@ -13,46 +11,23 @@ background:#a9bdd6;
 padding:40px;
 }
 
-h1{
-text-align:center;
-margin-bottom:30px;
-}
-
 .container{
 display:flex;
 flex-wrap:wrap;
+gap:20px;
 justify-content:center;
-gap:25px;
 }
 
 .card{
 background:white;
 padding:20px;
-border-radius:12px;
-width:260px;
+width:250px;
+border-radius:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 .card img{
 width:100%;
-border-radius:10px;
-margin-bottom:10px;
-}
-
-.status{
-font-weight:bold;
-color:#2f66e0;
-}
-
-.backbtn{
-display:block;
-width:200px;
-margin:40px auto;
-text-align:center;
-padding:10px;
-background:#2f66e0;
-color:white;
-text-decoration:none;
 border-radius:8px;
 }
 
@@ -64,9 +39,7 @@ border-radius:8px;
 
 <h1>Submitted Lost Items</h1>
 
-<div class="container" id="lostList"></div>
-
-<a class="backbtn" href="dashboard321.html">Back to Dashboard</a>
+<div class="container" id="list"></div>
 
 <script type="module">
 
@@ -83,39 +56,37 @@ appId:"1:910756623728:web:8ab55db46a984c75860bb5",
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
 
-const list=document.getElementById("lostList");
+const container=document.getElementById("list");
 
 onValue(ref(db,"lostItems"),(snapshot)=>{
 
-list.innerHTML="";
+container.innerHTML="";
 
 snapshot.forEach(child=>{
 
 const data=child.val();
-
-if(!data.item) return;
 
 const card=document.createElement("div");
 card.className="card";
 
 card.innerHTML=`
 
-<img src="${data.photo || ''}">
+<img src="${data.photo||''}">
 
 <p><b>Item:</b> ${data.item}</p>
-
 <p><b>Description:</b> ${data.description}</p>
-
 <p><b>Location:</b> ${data.location}</p>
 
-<p class="status"><b>Status:</b> ${data.status || "Waiting for Police Verification"}</p>
+<p><b>Status:</b> ${data.status||"Waiting for Police Verification"}</p>
+
+<p><i>Contact details will be shared by police.</i></p>
 
 `;
 
-list.appendChild(card);
+container.appendChild(card);
 
 });
 
