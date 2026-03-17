@@ -1,150 +1,24 @@
-<!DOCTYPE html>
+card.innerHTML = `
 
-<html>
-<head>
-
-<title>AI Match Results</title>
-
-<style>
-
-body{
-font-family:Arial;
-background:#a9bdd6;
-padding:40px;
-}
-
-h1{
-text-align:center;
-}
-
-.container{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:20px;
-margin-top:30px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-width:260px;
-box-shadow:0 4px 10px rgba(0,0,0,0.2);
-}
-
-.card img{
-width:100%;
-border-radius:8px;
-margin-bottom:10px;
-}
-
-.message{
-text-align:center;
-font-size:18px;
-margin-top:30px;
-}
-
-.back{
-display:block;
-width:200px;
-margin:40px auto;
-text-align:center;
-padding:10px;
-background:#2f66e0;
-color:white;
-text-decoration:none;
-border-radius:8px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>AI Match Results</h1>
-
-<div class="container" id="matchList"></div>
-
-<div id="message" class="message"></div>
-
-<a class="back" href="dashboard321.html">Back to Dashboard</a>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-authDomain:"intellifinds-19f97.firebaseapp.com",
-projectId:"intellifinds-19f97",
-storageBucket:"intellifinds-19f97.appspot.com",
-messagingSenderId:"910756623728",
-appId:"1:910756623728:web:8ab55db46a984c75860bb5",
-databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const container=document.getElementById("matchList");
-const message=document.getElementById("message");
-
-async function checkMatches(){
-
-const lostSnap = await get(ref(db,"lostItems"));
-const foundSnap = await get(ref(db,"foundItems"));
-
-let matchFound=false;
-
-lostSnap.forEach(lostChild=>{
-
-const lost=lostChild.val();
-const lostItem=(lost.item || "").toLowerCase();
-
-foundSnap.forEach(foundChild=>{
-
-const found=foundChild.val();
-const foundItem=(found.item || "").toLowerCase();
-
-if(lostItem && foundItem && (lostItem===foundItem || foundItem.includes(lostItem) || lostItem.includes(foundItem))){
-
-matchFound=true;
-
-const card=document.createElement("div");
-card.className="card";
-
-card.innerHTML=`
 <h3>Match Found</h3>
 
 <img src="${lost.photo || ''}">
 <p><b>Lost Item:</b> ${lost.item}</p>
 
+<p><b>Owner Name:</b> ${lost.name}</p>
+<p><b>Owner Phone:</b> ${lost.phone}</p>
+<p><b>Owner Email:</b> ${lost.email}</p>
+
+<hr>
+
 <img src="${found.photo || ''}">
 <p><b>Found Item:</b> ${found.item}</p>
 
-<p><b>Location:</b> ${lost.location}</p>
+<p><b>Finder Name:</b> ${found.name}</p>
+<p><b>Finder Phone:</b> ${found.phone}</p>
+<p><b>Finder Email:</b> ${found.email}</p>
+
+<button class="verify" onclick="verifyItem('${lostChild.key}')">Verify</button>
+<button class="reject" onclick="rejectItem('${lostChild.key}')">Reject</button>
+
 `;
-
-container.appendChild(card);
-
-}
-
-});
-
-});
-
-if(!matchFound){
-message.innerText="No matches found";
-}
-
-}
-
-checkMatches();
-
-</script>
-
-</body>
-</html>
