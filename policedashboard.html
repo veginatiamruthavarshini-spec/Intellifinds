@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+
 <html>
 <head>
+
 <title>Police Dashboard</title>
 
 <style>
@@ -13,27 +15,29 @@ padding:40px;
 
 h1{
 text-align:center;
+margin-bottom:40px;
 }
 
 .container{
 display:flex;
 flex-wrap:wrap;
-gap:20px;
+gap:25px;
 justify-content:center;
-margin-top:30px;
 }
 
 .card{
 background:white;
 padding:20px;
-width:280px;
-border-radius:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
+width:320px;
+border-radius:12px;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
 
 .card img{
 width:100%;
-border-radius:8px;
+height:200px;
+object-fit:cover;
+border-radius:10px;
 margin-bottom:10px;
 }
 
@@ -45,10 +49,28 @@ color:white;
 border-radius:6px;
 cursor:pointer;
 margin-top:10px;
+margin-right:10px;
 }
 
 .reject{
 background:red;
+}
+
+.verified{
+background:green;
+}
+
+.backbtn{
+display:block;
+width:220px;
+margin:40px auto;
+text-align:center;
+padding:12px;
+background:#2f66e0;
+color:white;
+border-radius:8px;
+text-decoration:none;
+font-weight:bold;
 }
 
 </style>
@@ -57,9 +79,11 @@ background:red;
 
 <body>
 
-<h1>Police Dashboard</h1>
+<h1>Police Verification Panel</h1>
 
 <div class="container" id="matchList"></div>
+
+<a href="dashboard321.html" class="backbtn">Back to Dashboard</a>
 
 <script type="module">
 
@@ -76,28 +100,21 @@ appId:"1:910756623728:web:8ab55db46a984c75860bb5",
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const container=document.getElementById("matchList");
-
-window.verifyItem = async function(id){
-await update(ref(db,"lostItems/"+id),{status:"Verified by Police"});
-alert("Item Verified");
-}
-
-window.rejectItem = async function(id){
-await update(ref(db,"lostItems/"+id),{status:"Rejected"});
-alert("Item Rejected");
-}
 
 let foundItems=[];
 
 onValue(ref(db,"foundItems"),(snapshot)=>{
+
 foundItems=[];
+
 snapshot.forEach(child=>{
 foundItems.push(child.val());
 });
+
 });
 
 onValue(ref(db,"lostItems"),(snapshot)=>{
@@ -107,37 +124,48 @@ container.innerHTML="";
 snapshot.forEach(child=>{
 
 const lost=child.val();
-const lostItem=(lost.item||"").toLowerCase();
+const lostKey=child.key;
 
 foundItems.forEach(found=>{
 
-const foundItem=(found.item||"").toLowerCase();
+if(!lost.item || !found.item) return;
 
-if(lostItem && foundItem && lostItem.includes(foundItem)){
+const lostItem=lost.item.toLowerCase();
+const foundItem=found.item.toLowerCase();
+
+if(lostItem.includes(foundItem) || foundItem.includes(lostItem)){
 
 const card=document.createElement("div");
 card.className="card";
 
 card.innerHTML=`
 
-<img src="${lost.photo||''}">
-<p><b>Lost Item:</b> ${lost.item}</p>
+<h3>Match Found</h3>
 
-<p><b>Owner Name:</b> ${lost.name}</p>
-<p><b>Owner Phone:</b> ${lost.phone}</p>
-<p><b>Owner Email:</b> ${lost.email}</p>
+<img src="${lost.photo || ''}">
+
+<p><b>Lost Item:</b> ${lost.item}</p>
+<p><b>Description:</b> ${lost.description}</p>
+<p><b>Location:</b> ${lost.location}</p>
+
+<p><b>Owner Name:</b> ${lost.name || 'Not Provided'}</p>
+<p><b>Owner Phone:</b> ${lost.phone || 'Not Provided'}</p>
+<p><b>Owner Email:</b> ${lost.email || 'Not Provided'}</p>
 
 <hr>
 
-<img src="${found.photo||''}">
+<img src="${found.photo || ''}">
+
 <p><b>Found Item:</b> ${found.item}</p>
+<p><b>Description:</b> ${found.description}</p>
+<p><b>Location:</b> ${found.location}</p>
 
-<p><b>Finder Name:</b> ${found.name}</p>
-<p><b>Finder Phone:</b> ${found.phone}</p>
-<p><b>Finder Email:</b> ${found.email}</p>
+<p><b>Finder Name:</b> ${found.name || 'Not Provided'}</p>
+<p><b>Finder Phone:</b> ${found.phone || 'Not Provided'}</p>
+<p><b>Finder Email:</b> ${found.email || 'Not Provided'}</p>
 
-<button onclick="verifyItem('${child.key}')">Verify</button>
-<button class="reject" onclick="rejectItem('${child.key}')">Reject</button>
+<button onclick="verifyItem('${lostKey}',this)">Verify</button>
+<button class="reject" onclick="rejectItem('${lostKey}')">Reject</button>
 
 `;
 
@@ -150,6 +178,27 @@ container.appendChild(card);
 });
 
 });
+
+window.verifyItem=async function(id,btn){
+
+await update(ref(db,"lostItems/"+id),{
+status:"Verified"
+});
+
+btn.innerText="Verified";
+btn.classList.add("verified");
+
+}
+
+window.rejectItem=async function(id){
+
+await update(ref(db,"lostItems/"+id),{
+status:"Rejected"
+});
+
+alert("Item Rejected");
+
+}
 
 </script>
 
