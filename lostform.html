@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 
@@ -27,7 +28,7 @@ box-shadow:0 5px 15px rgba(0,0,0,0.2);
 input{
 width:100%;
 padding:10px;
-margin:10px 0;
+margin:8px 0;
 }
 
 button{
@@ -37,12 +38,6 @@ color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
-}
-
-img{
-width:100%;
-margin-top:10px;
-border-radius:10px;
 }
 
 </style>
@@ -56,20 +51,18 @@ border-radius:10px;
 <h2>Report Lost Item</h2>
 
 <input type="text" id="item" placeholder="Item Name">
-
 <input type="text" id="description" placeholder="Description">
-
 <input type="text" id="location" placeholder="Location Lost">
 
-<input type="file" id="photo" accept="image/*" capture="environment">
+<input type="text" id="name" placeholder="Your Name">
+<input type="text" id="phone" placeholder="Phone Number">
+<input type="text" id="email" placeholder="Email">
 
-<img id="preview">
+<input type="file" id="photo">
 
 <button onclick="submitLost()">Submit</button>
 
-<br><br>
-
-<a href="dashboard321.html">Back to Dashboard</a>
+<br><br> <a href="dashboard321.html">Back</a>
 
 </div>
 
@@ -77,6 +70,7 @@ border-radius:10px;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
@@ -90,43 +84,40 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const storage = getStorage(app);
 
-let imageData="";
-
-document.getElementById("photo").addEventListener("change",function(){
-
-const file=this.files[0];
-
-const reader=new FileReader();
-
-reader.onload=function(e){
-
-imageData=e.target.result;
-
-document.getElementById("preview").src=imageData;
-
-}
-
-reader.readAsDataURL(file);
-
-});
-
-window.submitLost=function(){
+window.submitLost = async function(){
 
 const item=document.getElementById("item").value;
 const description=document.getElementById("description").value;
 const location=document.getElementById("location").value;
 
+const name=document.getElementById("name").value;
+const phone=document.getElementById("phone").value;
+const email=document.getElementById("email").value;
+
+const file=document.getElementById("photo").files[0];
+
+let photoURL="";
+
+if(file){
+const storageRef=sRef(storage,"lostImages/"+file.name);
+await uploadBytes(storageRef,file);
+photoURL=await getDownloadURL(storageRef);
+}
+
 push(ref(db,"lostItems"),{
-
-item:item,
-description:description,
-location:location,
-photo:imageData
-
+item,
+description,
+location,
+photo:photoURL,
+name,
+phone,
+email,
+status:"Waiting for Police Verification"
 });
 
-alert("Lost Item Submitted");
+alert("Lost Item Submitted Successfully");
 
 }
 
