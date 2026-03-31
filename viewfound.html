@@ -6,7 +6,6 @@
 <title>Found Items</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#a9bdd6;
@@ -21,7 +20,7 @@ margin-bottom:30px;
 .container{
 display:flex;
 flex-wrap:wrap;
-gap:25px;
+gap:20px;
 justify-content:center;
 }
 
@@ -29,7 +28,7 @@ justify-content:center;
 background:white;
 padding:20px;
 width:280px;
-border-radius:12px;
+border-radius:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
@@ -43,17 +42,15 @@ margin-bottom:10px;
 
 .backbtn{
 display:block;
-width:220px;
+width:200px;
 margin:40px auto;
 text-align:center;
-padding:12px;
+padding:10px;
 background:#2f66e0;
 color:white;
 border-radius:8px;
 text-decoration:none;
-font-weight:bold;
 }
-
 </style>
 
 </head>
@@ -86,24 +83,24 @@ const db = getDatabase(app);
 
 const container = document.getElementById("list");
 
-onValue(ref(db,"foundItems"), (snapshot)=>{
+onValue(ref(db,"foundItems"), function(snapshot){
 
 container.innerHTML = "";
 
-/* If no data */
+/* No data case */
 if(!snapshot.exists()){
 container.innerHTML = "<h3>No found items available</h3>";
 return;
 }
 
-snapshot.forEach(child=>{
+snapshot.forEach(function(child){
 
 const data = child.val();
 
 const card = document.createElement("div");
 card.className = "card";
 
-/* CLEAN SAFE STRING */
+/* SAFEST WAY — NO STRING ERRORS */
 let html = "";
 
 html += "<img src='" + (data.photo || "") + "'>";
