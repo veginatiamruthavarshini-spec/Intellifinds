@@ -1,96 +1,121 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-<title>Police Dashboard</title>
-<style>
-body{font-family:Arial;background:#a9bdd6;padding:40px;}
-.card{background:white;padding:20px;margin:10px;border-radius:10px;}
-button{padding:8px;margin-top:10px;}
-.reject{background:red;color:white;}
-</style>
+  <title>Police Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #020617;
+      color: white;
+      text-align: center;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 15px;
+      margin: 15px auto;
+      width: 320px;
+      border-radius: 10px;
+    }
+
+    button {
+      padding: 8px;
+      margin-top: 10px;
+      background: red;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>Police Dashboard</h1>
-<div id="list"></div>
+<h2>Police Dashboard</h2>
+
+<h3>Lost Items</h3>
+<div id="lostList"></div>
+
+<h3>Found Items</h3>
+<div id="foundList"></div>
 
 <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID"
+};
 
-const app = initializeApp({
-apiKey:"AIzaSy...",
-databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const lostDiv = document.getElementById("lostList");
+const foundDiv = document.getElementById("foundList");
+
+// LOAD LOST ITEMS
+const lostSnap = await getDocs(collection(db, "lostItems"));
+
+lostSnap.forEach(d => {
+  const data = d.data();
+
+  lostDiv.innerHTML += `
+    <div class="card">
+      <h3>${data.title}</h3>
+      <p>${data.description}</p>
+      <p>${data.location}</p>
+
+      ${
+        data.isVerified
+        ? `<p><b>Name:</b> ${data.name}</p>
+           <p><b>Phone:</b> ${data.phone}</p>
+           <p><b>Address:</b> ${data.address}</p>`
+        : `<button onclick="verifyLost('${d.id}')">Verify</button>`
+      }
+    </div>
+  `;
 });
 
-const db = getDatabase(app);
-const container=document.getElementById("list");
+// LOAD FOUND ITEMS
+const foundSnap = await getDocs(collection(db, "foundItems"));
 
-let foundItems=[];
+foundSnap.forEach(d => {
+  const data = d.data();
 
-onValue(ref(db,"foundItems"),(snap)=>{
-foundItems=[];
-snap.forEach(c=>foundItems.push(c.val()));
+  foundDiv.innerHTML += `
+    <div class="card">
+      <h3>${data.title}</h3>
+      <p>${data.description}</p>
+      <p>${data.location}</p>
+
+      ${
+        data.isVerified
+        ? `<p><b>Name:</b> ${data.name}</p>
+           <p><b>Phone:</b> ${data.phone}</p>
+           <p><b>Address:</b> ${data.address}</p>`
+        : `<button onclick="verifyFound('${d.id}')">Verify</button>`
+      }
+    </div>
+  `;
 });
 
-onValue(ref(db,"lostItems"),(snap)=>{
+// VERIFY FUNCTIONS
+window.verifyLost = async function(id) {
+  await updateDoc(doc(db, "lostItems", id), {
+    isVerified: true
+  });
+  location.reload();
+};
 
-container.innerHTML="";
-
-snap.forEach(child=>{
-
-const lost=child.val();
-const key=child.key;
-
-foundItems.forEach(found=>{
-
-if(lost.item && found.item &&
-lost.item.toLowerCase().includes(found.item.toLowerCase())){
-
-const div=document.createElement("div");
-div.className="card";
-
-div.innerHTML =
-
-"<b>Lost:</b> "+lost.item+"<br>"+
-"<b>Owner:</b> "+lost.name+"<br>"+
-"<b>Phone:</b> "+lost.phone+"<br><br>"+
-
-"<b>Found:</b> "+found.item+"<br>"+
-"<b>Finder:</b> "+found.name+"<br>"+
-"<b>Phone:</b> "+found.phone+"<br><br>"+
-
-"<button onclick=\"verifyItem('"+key+"',this)\">Verify</button>"+
-"<button class='reject' onclick=\"rejectItem('"+key+"')\">Reject</button>";
-
-container.appendChild(div);
-
-}
-
-});
-
-});
-
-});
-
-window.verifyItem=async function(id,btn){
-
-await update(ref(db,"lostItems/"+id),{status:"Verified"});
-
-btn.innerText="Verified";
-btn.disabled=true;
-btn.style.background="green";
-
-btn.nextElementSibling.remove();
-
-}
-
-window.rejectItem=async function(id){
-await update(ref(db,"lostItems/"+id),{status:"Rejected"});
-}
+window.verifyFound = async function(id) {
+  await updateDoc(doc(db, "foundItems", id), {
+    isVerified: true
+  });
+  location.reload();
+};
 
 </script>
 
