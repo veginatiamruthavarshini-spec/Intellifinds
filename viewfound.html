@@ -3,7 +3,7 @@
 <html>
 <head>
 
-<title>Submitted Found Items</title>
+<title>Found Items</title>
 
 <style>
 
@@ -97,33 +97,17 @@ const data = child.val();
 const card = document.createElement("div");
 card.className="card";
 
-card.innerHTML = `
+card.innerHTML =
 
-<img src="${data.photo || ''}">
+"<img src='"+(data.photo || "")+"'>" +
 
-<p><b>Item:</b> ${data.item || 'N/A'}</p>
-<p><b>Description:</b> ${data.description || 'N/A'}</p>
-<p><b>Location:</b> ${data.location || 'N/A'}</p>
+"<p><b>Item:</b> "+(data.item || "N/A")+"</p>" +
+"<p><b>Description:</b> "+(data.description || "N/A")+"</p>" +
+"<p><b>Location:</b> "+(data.location || "N/A")+"</p>" +
 
-<p><b>Status:</b> ${data.status || "Waiting for Police Verification"}</p>
+"<p><b>Status:</b> "+(data.status || "Waiting for Police Verification")+"</p>" +
 
-${
-data.status === "Verified" ? `
-
-<hr>
-
-<p><b>Finder Name:</b> ${data.name || 'Not Provided'}</p>
-<p><b>Phone:</b> ${data.phone || 'Not Provided'}</p>
-<p><b>Email:</b> ${data.email || 'Not Provided'}</p>
-
-` : `
-
-<p><i>Details will be revealed after police verification</i></p>
-
-`
-}
-
-`;
+"<p><i>Contact details are only visible to police</i></p>";
 
 container.appendChild(card);
 
