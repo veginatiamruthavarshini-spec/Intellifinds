@@ -1,65 +1,40 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-<title>Report Lost Item</title>
-
-<style>
-body{font-family:Arial;background:#a9bdd6;display:flex;justify-content:center;align-items:center;height:100vh;}
-.card{background:white;padding:30px;border-radius:15px;width:350px;text-align:center;}
-input{width:100%;padding:10px;margin:8px 0;}
-button{padding:10px;background:#2f66e0;color:white;border:none;border-radius:6px;}
-</style>
-
+  <title>Lost Item</title>
 </head>
-
 <body>
-
-<div class="card">
 
 <h2>Report Lost Item</h2>
 
-<input id="item" placeholder="Item Name">
-<input id="description" placeholder="Description">
-<input id="location" placeholder="Location Lost">
+<input id="title" placeholder="Item Name"><br><br>
+<input id="desc" placeholder="Description"><br><br>
+<input id="loc" placeholder="Location"><br><br>
 
 <h3>Your Details</h3>
-<input id="name" placeholder="Your Name">
-<input id="phone" placeholder="Phone Number">
-<input id="email" placeholder="Email">
+<input id="name" placeholder="Name"><br><br>
+<input id="phone" placeholder="Phone"><br><br>
+<input id="address" placeholder="Address"><br><br>
 
 <button onclick="submitLost()">Submit</button>
 
-</div>
-
 <script type="module">
+import { db } from "./firebase.js";
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+window.submitLost = async function () {
+  await addDoc(collection(db, "lostItems"), {
+    title: document.getElementById("title").value,
+    description: document.getElementById("desc").value,
+    location: document.getElementById("loc").value,
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value,
+    isVerified: false
+  });
 
-const app = initializeApp({
-apiKey:"AIzaSy...",
-databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db = getDatabase(app);
-
-window.submitLost = function(){
-
-push(ref(db,"lostItems"),{
-item:document.getElementById("item").value,
-description:document.getElementById("description").value,
-location:document.getElementById("location").value,
-name:document.getElementById("name").value,
-phone:document.getElementById("phone").value,
-email:document.getElementById("email").value,
-status:"Waiting"
-});
-
-alert("Submitted");
-
-}
-
+  alert("Lost item submitted!");
+};
 </script>
 
 </body>
