@@ -2,38 +2,102 @@
 <html>
 <head>
   <title>Lost Item</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      margin: auto;
+    }
+
+    input {
+      width: 90%;
+      padding: 8px;
+      margin: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 10px;
+      background: #22c55e;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
 
 <h2>Report Lost Item</h2>
 
-<input id="title" placeholder="Item Name"><br><br>
-<input id="desc" placeholder="Description"><br><br>
-<input id="loc" placeholder="Location"><br><br>
+<div class="container">
 
-<h3>Your Details</h3>
-<input id="name" placeholder="Name"><br><br>
-<input id="phone" placeholder="Phone"><br><br>
-<input id="address" placeholder="Address"><br><br>
+  <input id="title" placeholder="Item Name">
+  <input id="desc" placeholder="Description">
+  <input id="loc" placeholder="Location">
 
-<button onclick="submitLost()">Submit</button>
+  <h3>Your Details</h3>
+
+  <input id="name" placeholder="Your Name">
+  <input id="phone" placeholder="Phone Number">
+  <input id="address" placeholder="Address">
+
+  <button onclick="submitLost()">Submit</button>
+
+</div>
 
 <script type="module">
-import { db } from "./firebase.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 window.submitLost = async function () {
+
+  const title = document.getElementById("title").value;
+  const desc = document.getElementById("desc").value;
+  const loc = document.getElementById("loc").value;
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const address = document.getElementById("address").value;
+
+  if (!title || !desc || !loc || !name || !phone || !address) {
+    alert("Please fill all fields");
+    return;
+  }
+
   await addDoc(collection(db, "lostItems"), {
-    title: document.getElementById("title").value,
-    description: document.getElementById("desc").value,
-    location: document.getElementById("loc").value,
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    address: document.getElementById("address").value,
+    title: title,
+    description: desc,
+    location: loc,
+    name: name,
+    phone: phone,
+    address: address,
     isVerified: false
   });
 
-  alert("Lost item submitted!");
+  alert("Lost item submitted successfully!");
+
+  document.querySelectorAll("input").forEach(i => i.value = "");
 };
 </script>
 
