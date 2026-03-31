@@ -6,6 +6,7 @@
 <title>Found Items</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#a9bdd6;
@@ -50,7 +51,9 @@ background:#2f66e0;
 color:white;
 border-radius:8px;
 text-decoration:none;
+font-weight:bold;
 }
+
 </style>
 
 </head>
@@ -87,7 +90,7 @@ onValue(ref(db,"foundItems"), function(snapshot){
 
 container.innerHTML = "";
 
-/* No data case */
+/* HANDLE EMPTY DATA */
 if(!snapshot.exists()){
 container.innerHTML = "<h3>No found items available</h3>";
 return;
@@ -100,17 +103,21 @@ const data = child.val();
 const card = document.createElement("div");
 card.className = "card";
 
-/* SAFEST WAY — NO STRING ERRORS */
+/* SAFEST STRING BUILDING */
 let html = "";
 
+/* IMAGE */
 html += "<img src='" + (data.photo || "") + "'>";
 
+/* DETAILS */
 html += "<p><b>Item:</b> " + (data.item || "N/A") + "</p>";
 html += "<p><b>Description:</b> " + (data.description || "N/A") + "</p>";
 html += "<p><b>Location:</b> " + (data.location || "N/A") + "</p>";
 
+/* STATUS */
 html += "<p><b>Status:</b> " + (data.status || "Waiting for Police Verification") + "</p>";
 
+/* PRIVACY MESSAGE */
 html += "<p><i>Contact details are only visible to police</i></p>";
 
 card.innerHTML = html;
