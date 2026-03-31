@@ -88,11 +88,11 @@ const container = document.getElementById("list");
 
 onValue(ref(db,"foundItems"), (snapshot)=>{
 
-container.innerHTML="";
+container.innerHTML = "";
 
-/* No data case */
+/* If no data */
 if(!snapshot.exists()){
-container.innerHTML="<h3>No found items available</h3>";
+container.innerHTML = "<h3>No found items available</h3>";
 return;
 }
 
@@ -103,17 +103,20 @@ const data = child.val();
 const card = document.createElement("div");
 card.className = "card";
 
-/* CLEAN STRING (NO BREAK ERRORS) */
-card.innerHTML =
-"<img src='" + (data.photo || "") + "'>" +
+/* CLEAN SAFE STRING */
+let html = "";
 
-"<p><b>Item:</b> " + (data.item || "N/A") + "</p>" +
-"<p><b>Description:</b> " + (data.description || "N/A") + "</p>" +
-"<p><b>Location:</b> " + (data.location || "N/A") + "</p>" +
+html += "<img src='" + (data.photo || "") + "'>";
 
-"<p><b>Status:</b> " + (data.status || "Waiting for Police Verification") + "</p>" +
+html += "<p><b>Item:</b> " + (data.item || "N/A") + "</p>";
+html += "<p><b>Description:</b> " + (data.description || "N/A") + "</p>";
+html += "<p><b>Location:</b> " + (data.location || "N/A") + "</p>";
 
-"<p><i>Contact details are only visible to police</i></p>";
+html += "<p><b>Status:</b> " + (data.status || "Waiting for Police Verification") + "</p>";
+
+html += "<p><i>Contact details are only visible to police</i></p>";
+
+card.innerHTML = html;
 
 container.appendChild(card);
 
