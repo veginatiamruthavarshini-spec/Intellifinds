@@ -31,6 +31,7 @@ background:#2f66e0;
 color:white;
 border:none;
 border-radius:6px;
+cursor:pointer;
 }
 </style>
 
@@ -42,12 +43,12 @@ border-radius:6px;
 
 <h2>Report Found Item</h2>
 
-<input id="item" placeholder="Item">
+<input id="item" placeholder="Item Name">
 <input id="description" placeholder="Description">
 <input id="location" placeholder="Location">
 
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
+<input id="name" placeholder="Finder Name">
+<input id="phone" placeholder="Phone Number">
 <input id="email" placeholder="Email">
 
 <input type="file" id="photo" accept="image/*" capture="environment">
@@ -63,25 +64,30 @@ border-radius:6px;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const app = initializeApp({
+const firebaseConfig = {
+apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+};
 
+const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let imageData="";
+let imageData = "";
 
+/* IMAGE HANDLING */
 document.getElementById("photo").addEventListener("change",(e)=>{
-const reader=new FileReader();
-reader.onload=()=>imageData=reader.result;
-reader.readAsDataURL(e.target.files[0]);
+const file = e.target.files[0];
+if(file){
+const reader = new FileReader();
+reader.onload = ()=> imageData = reader.result;
+reader.readAsDataURL(file);
+}
 });
 
-window.submitFound = function(){
+window.submitFound = async function(){
 
 const btn = document.getElementById("submitBtn");
 
-/* GET VALUES CORRECTLY */
 const itemVal = document.getElementById("item").value;
 const descVal = document.getElementById("description").value;
 const locVal = document.getElementById("location").value;
@@ -89,18 +95,17 @@ const nameVal = document.getElementById("name").value;
 const phoneVal = document.getElementById("phone").value;
 const emailVal = document.getElementById("email").value;
 
-/* VALIDATION */
 if(!itemVal || !descVal || !locVal || !nameVal || !phoneVal || !emailVal){
 alert("Fill all fields");
 return;
 }
 
-/* BUTTON CHANGE */
-btn.innerText = "Submitting...";
-btn.disabled = true;
+try{
 
-/* PUSH */
-push(ref(db,"foundItems"),{
+btn.innerText="Submitting...";
+btn.disabled=true;
+
+await push(ref(db,"foundItems"),{
 item:itemVal,
 description:descVal,
 location:locVal,
@@ -111,14 +116,19 @@ email:emailVal,
 status:"Submitted"
 });
 
-/* FINAL UI */
-btn.innerText = "Submitted";
-btn.style.background = "green";
+btn.innerText="Submitted";
+btn.style.background="green";
 
-/* ALERT */
 alert("Submitted Successfully");
 
+}catch(err){
+alert("Error: "+err.message);
+btn.innerText="Submit";
+btn.disabled=false;
 }
+
+}
+
 </script>
 
 </body>
