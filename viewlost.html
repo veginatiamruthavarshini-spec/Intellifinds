@@ -19,23 +19,16 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 const db = getDatabase(app);
 
 onValue(ref(db,"lostItems"),(snap)=>{
-
 let html="";
 
-if(!snap.exists()){
-html="<p>No items found</p>";
-}else{
 snap.forEach(c=>{
 let d=c.val();
-
 html += "<p><b>"+d.item+"</b></p>";
 html += "<p>Status: "+d.status+"</p>";
-html += "<p style='color:gray'>Details only visible to police</p><hr>";
+html += "<hr>";
 });
-}
 
 document.getElementById("list").innerHTML=html;
-
 });
 </script>
 
