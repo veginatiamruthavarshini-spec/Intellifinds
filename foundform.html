@@ -4,7 +4,8 @@
 <style>
 body{font-family:Arial;background:#a9bdd6;text-align:center;padding-top:50px;}
 input{display:block;margin:10px auto;padding:10px;width:250px;}
-button{padding:10px 20px;background:#2f66e0;color:white;border:none;}
+button{padding:10px 20px;background:#2f66e0;color:white;border:none;margin-top:10px;}
+.back{display:block;margin-top:20px;color:#000;text-decoration:none;}
 </style>
 </head><body><h2>Report Found Item</h2><input id="item" placeholder="Item">
 <input id="description" placeholder="Description">
@@ -12,6 +13,8 @@ button{padding:10px 20px;background:#2f66e0;color:white;border:none;}
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email"><button onclick="submitFound()">Submit</button>
+
+<a href="index.html" class="back">⬅ Back</a>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -24,7 +27,6 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 const db = getDatabase(app);
 
 window.submitFound = function(){
-
 push(ref(db,"foundItems"),{
 item:document.getElementById("item").value,
 description:document.getElementById("description").value,
@@ -34,9 +36,7 @@ phone:document.getElementById("phone").value,
 email:document.getElementById("email").value,
 status:"Waiting"
 });
-
 alert("Submitted");
-
 }
 </script></body>
 </html>
