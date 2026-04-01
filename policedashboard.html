@@ -1,123 +1,59 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Police Dashboard</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #020617;
-      color: white;
-      text-align: center;
-    }
+<!DOCTYPE html><html>
+<body><h2>Police Dashboard</h2>
+<div id="list"></div><script type="module">
 
-    .card {
-      background: #1e293b;
-      padding: 15px;
-      margin: 15px auto;
-      width: 320px;
-      border-radius: 10px;
-    }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    button {
-      padding: 8px;
-      margin-top: 10px;
-      background: red;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-
-<body>
-
-<h2>Police Dashboard</h2>
-
-<h3>Lost Items</h3>
-<div id="lostList"></div>
-
-<h3>Found Items</h3>
-<div id="foundList"></div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const lostDiv = document.getElementById("lostList");
-const foundDiv = document.getElementById("foundList");
-
-// LOAD LOST ITEMS
-const lostSnap = await getDocs(collection(db, "lostItems"));
-
-lostSnap.forEach(d => {
-  const data = d.data();
-
-  lostDiv.innerHTML += `
-    <div class="card">
-      <h3>${data.title}</h3>
-      <p>${data.description}</p>
-      <p>${data.location}</p>
-
-      ${
-        data.isVerified
-        ? `<p><b>Name:</b> ${data.name}</p>
-           <p><b>Phone:</b> ${data.phone}</p>
-           <p><b>Address:</b> ${data.address}</p>`
-        : `<button onclick="verifyLost('${d.id}')">Verify</button>`
-      }
-    </div>
-  `;
+const app = initializeApp({
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
-// LOAD FOUND ITEMS
-const foundSnap = await getDocs(collection(db, "foundItems"));
+const db = getDatabase(app);
 
-foundSnap.forEach(d => {
-  const data = d.data();
+let found=[];
 
-  foundDiv.innerHTML += `
-    <div class="card">
-      <h3>${data.title}</h3>
-      <p>${data.description}</p>
-      <p>${data.location}</p>
-
-      ${
-        data.isVerified
-        ? `<p><b>Name:</b> ${data.name}</p>
-           <p><b>Phone:</b> ${data.phone}</p>
-           <p><b>Address:</b> ${data.address}</p>`
-        : `<button onclick="verifyFound('${d.id}')">Verify</button>`
-      }
-    </div>
-  `;
+onValue(ref(db,"foundItems"),(s)=>{
+found=[];
+s.forEach(c=>found.push(c.val()));
 });
 
-// VERIFY FUNCTIONS
-window.verifyLost = async function(id) {
-  await updateDoc(doc(db, "lostItems", id), {
-    isVerified: true
-  });
-  location.reload();
-};
+onValue(ref(db,"lostItems"),(snap)=>{
 
-window.verifyFound = async function(id) {
-  await updateDoc(doc(db, "foundItems", id), {
-    isVerified: true
-  });
-  location.reload();
-};
+let html="";
 
-</script>
+snap.forEach(c=>{
 
-</body>
+let lost=c.val();
+let id=c.key;
+
+found.forEach(f=>{
+
+if(lost.item && f.item && lost.item.toLowerCase()==f.item.toLowerCase()){
+
+html += "<p><b>Lost:</b> "+lost.item+"</p>";
+html += "<p>Name: "+lost.name+" | Phone: "+lost.phone+" | Email: "+lost.email+"</p>";
+
+html += "<p><b>Found:</b> "+f.item+"</p>";
+html += "<p>Name: "+f.name+" | Phone: "+f.phone+" | Email: "+f.email+"</p>";
+
+html += "<button onclick=\"verify('"+id+"')\">Verify</button>";
+html += "<hr>";
+
+}
+
+});
+
+});
+
+document.getElementById("list").innerHTML=html;
+
+});
+
+window.verify=function(id){
+update(ref(db,"lostItems/"+id),{status:"Verified"});
+alert("Verified");
+}
+
+</script></body>
 </html>
