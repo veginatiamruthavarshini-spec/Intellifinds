@@ -1,6 +1,8 @@
 <!DOCTYPE html><html>
 <body><h2>Found Items</h2>
-<div id="list"></div><script type="module">
+<div id="list"></div><a href="index.html">⬅ Back</a>
+
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -11,18 +13,13 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 const db = getDatabase(app);
 
 onValue(ref(db,"foundItems"),(snap)=>{
-
 let html="";
-
 snap.forEach(c=>{
 let d=c.val();
-
 html += "<p><b>"+d.item+"</b> - "+d.status+"</p>";
 html += "<p style='color:gray'>Details only visible to police</p><hr>";
 });
-
 document.getElementById("list").innerHTML=html;
-
 });
 </script></body>
 </html>
