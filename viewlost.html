@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <title>Lost Items</title>
@@ -6,42 +7,56 @@
 <style>
 body{
 font-family:Arial;
-background:#a9bdd6;
+background:#8ea3bb;
+text-align:center;
 padding:40px;
 }
 
-h2{
-margin-bottom:25px;
+.container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
 }
 
-.item{
+.card{
 background:white;
 padding:15px;
-margin-bottom:20px;
+border-radius:15px;
+width:260px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
 border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
 
 .back{
 display:inline-block;
-margin-top:20px;
-padding:10px 18px;
+margin-top:30px;
+padding:12px 20px;
 background:#2f66e0;
 color:white;
 text-decoration:none;
 border-radius:8px;
 }
 </style>
+
 </head>
 
 <body>
 
-<h2>Lost Items</h2>
-<div id="list"></div>
+<h1>Submitted Lost Items</h1>
 
-<a href="dashboard321.html" class="back">⬅ Back</a>
+<div class="container" id="list"></div>
+
+<a href="dashboard321.html" class="back">Back to Dashboard</a>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
@@ -52,19 +67,28 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 const db = getDatabase(app);
 
 onValue(ref(db,"lostItems"),(snap)=>{
+
 let html="";
 
 snap.forEach(c=>{
 let d=c.val();
 
-html += "<div class='item'>";
-html += "<p><b>"+(d.item || "No Item")+"</b></p>";
-html += "<p>Status: "+(d.status || "Waiting")+"</p>";
-html += "</div>";
+html += `
+<div class="card">
+<img src="${d.photo || ''}">
+<p><b>Item:</b> ${d.item}</p>
+<p><b>Description:</b> ${d.description}</p>
+<p><b>Location:</b> ${d.location}</p>
+<p><b>Status:</b> ${d.status}</p>
+</div>
+`;
+
 });
 
-document.getElementById("list").innerHTML = html || "<p>No lost items found</p>";
+document.getElementById("list").innerHTML = html;
+
 });
+
 </script>
 
 </body>
