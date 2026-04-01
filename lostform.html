@@ -5,15 +5,15 @@
 body{font-family:Arial;background:#a9bdd6;text-align:center;padding-top:50px;}
 input{display:block;margin:10px auto;padding:10px;width:250px;}
 button{padding:10px 20px;background:#2f66e0;color:white;border:none;margin-top:10px;}
-.back{display:block;margin-top:20px;color:#000;text-decoration:none;}
+.back{display:block;margin-top:20px;}
+img{width:200px;margin-top:10px;}
 </style>
 </head><body><h2>Report Lost Item</h2><input id="item" placeholder="Item">
 <input id="description" placeholder="Description">
-<input id="location" placeholder="Location"><h3>Your Details</h3>
+<input id="location" placeholder="Location"><input type="file" accept="image/*" capture="environment" id="photo"><img id="preview"><h3>Your Details</h3>
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email"><button onclick="submitLost()">Submit</button>
-
 <a href="index.html" class="back">⬅ Back</a>
 
 <script type="module">
@@ -26,17 +26,33 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 
 const db = getDatabase(app);
 
+let imageData="";
+
+document.getElementById("photo").addEventListener("change", function(e){
+const file = e.target.files[0];
+const reader = new FileReader();
+reader.onload = function(){
+imageData = reader.result;
+document.getElementById("preview").src = imageData;
+};
+reader.readAsDataURL(file);
+});
+
 window.submitLost = function(){
+
 push(ref(db,"lostItems"),{
-item:document.getElementById("item").value,
-description:document.getElementById("description").value,
-location:document.getElementById("location").value,
-name:document.getElementById("name").value,
-phone:document.getElementById("phone").value,
-email:document.getElementById("email").value,
+item:item.value,
+description:description.value,
+location:location.value,
+photo:imageData,
+name:name.value,
+phone:phone.value,
+email:email.value,
 status:"Waiting"
 });
+
 alert("Submitted");
+
 }
 </script></body>
 </html>
