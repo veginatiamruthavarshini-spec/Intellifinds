@@ -1,6 +1,85 @@
-window.submitFound = function(){
+<!DOCTYPE html>
 
-const btn = document.getElementById("submitBtn");
+<html>
+<head>
+<title>Report Found Item</title>
+
+<style>
+body{
+font-family:Arial;
+background:#a9bdd6;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+.card{
+background:white;
+padding:30px;
+border-radius:15px;
+width:350px;
+text-align:center;
+}
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+}
+button{
+padding:10px;
+background:#2f66e0;
+color:white;
+border:none;
+border-radius:6px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Report Found Item</h2>
+
+<input id="item" placeholder="Item">
+<input id="description" placeholder="Description">
+<input id="location" placeholder="Location">
+
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="email" placeholder="Email">
+
+<input type="file" id="photo" accept="image/*" capture="environment">
+
+<button id="submitBtn" onclick="submitFound()">Submit</button>
+
+<br><br><a href="index.html">⬅ Back</a>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const app = initializeApp({
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = getDatabase(app);
+
+let imageData="";
+
+document.getElementById("photo").addEventListener("change",(e)=>{
+const reader=new FileReader();
+reader.onload=()=>imageData=reader.result;
+reader.readAsDataURL(e.target.files[0]);
+});
+
+window.submitFound=function(){
+
+const btn=document.getElementById("submitBtn");
 
 const item=item.value;
 const description=description.value;
@@ -9,30 +88,25 @@ const name=name.value;
 const phone=phone.value;
 const email=email.value;
 
-if(!item || !description || !location || !name || !phone || !email){
+if(!item||!description||!location||!name||!phone||!email){
 alert("Fill all fields");
 return;
 }
 
-/* CHANGE BUTTON */
 btn.innerText="Submitting...";
 btn.disabled=true;
 
 push(ref(db,"foundItems"),{
-item,
-description,
-location,
-photo:imageData,
-name,
-phone,
-email,
-status:"Submitted"
+item,description,location,photo:imageData,name,phone,email,status:"Submitted"
 });
 
-/* FINAL UPDATE */
 btn.innerText="Submitted";
 btn.style.background="green";
 
 alert("Submitted Successfully");
 
 }
+</script>
+
+</body>
+</html>
