@@ -1,60 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>View Found Items</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-    }
+<!DOCTYPE html><html>
+<body><h2>Found Items</h2>
+<div id="list"></div><script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    .card {
-      background: #1e293b;
-      padding: 15px;
-      margin: 15px auto;
-      width: 300px;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-
-<body>
-
-<h2>Found Items</h2>
-<div id="list"></div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const list = document.getElementById("list");
-
-const snapshot = await getDocs(collection(db, "foundItems"));
-
-snapshot.forEach(doc => {
-  const data = doc.data();
-
-  list.innerHTML += `
-    <div class="card">
-      <h3>${data.title}</h3>
-      <p>${data.description}</p>
-      <p><b>Location:</b> ${data.location}</p>
-      <p style="color:orange;"><b>Personal details hidden</b></p>
-    </div>
-  `;
+const app = initializeApp({
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-</script>
 
-</body>
+const db = getDatabase(app);
+
+onValue(ref(db,"foundItems"),(snap)=>{
+
+let html="";
+
+snap.forEach(c=>{
+let d=c.val();
+
+html += "<p><b>"+d.item+"</b> - "+d.status+"</p>";
+html += "<p style='color:gray'>Details only visible to police</p><hr>";
+});
+
+document.getElementById("list").innerHTML=html;
+
+});
+</script></body>
 </html>
