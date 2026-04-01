@@ -30,6 +30,24 @@ object-fit:cover;
 border-radius:10px;
 }
 
+button{
+margin:5px;
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.verify{
+background:green;
+color:white;
+}
+
+.reject{
+background:red;
+color:white;
+}
+
 .back{
 display:inline-block;
 margin-top:30px;
@@ -49,7 +67,7 @@ font-weight:bold;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const app = initializeApp({
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
@@ -59,21 +77,35 @@ const db = getDatabase(app);
 
 let foundItems = [];
 
+/* LOAD FOUND ITEMS WITH IDs */
 onValue(ref(db,"foundItems"),(snap)=>{
 foundItems = [];
-snap.forEach(c=>foundItems.push(c.val()));
+snap.forEach(c=>{
+foundItems.push({
+id:c.key,
+data:c.val()
+});
+});
 });
 
+/* LOAD LOST ITEMS */
 onValue(ref(db,"lostItems"),(snap)=>{
 
 let html="";
 
 snap.forEach(c=>{
+
 let lost = c.val();
+let lostId = c.key;
 
 foundItems.forEach(f=>{
 
-if(lost.item && f.item && lost.item.toLowerCase() === f.item.toLowerCase()){
+let found = f.data;
+let foundId = f.id;
+
+/* MATCH CONDITION */
+if(lost.item && found.item && 
+lost.item.toLowerCase().trim() === found.item.toLowerCase().trim()){
 
 html += `
 <div class="card">
@@ -81,20 +113,23 @@ html += `
 <p class="match">MATCH FOUND</p>
 
 <img src="${lost.photo || ''}">
-<p><b>Lost Item:</b> ${lost.item}</p>
+<p><b>Lost:</b> ${lost.item}</p>
 <p>${lost.description}</p>
-
 <p><b>Owner:</b> ${lost.name}</p>
 <p>${lost.phone} | ${lost.email}</p>
 
 <hr>
 
-<img src="${f.photo || ''}">
-<p><b>Found Item:</b> ${f.item}</p>
-<p>${f.description}</p>
+<img src="${found.photo || ''}">
+<p><b>Found:</b> ${found.item}</p>
+<p>${found.description}</p>
+<p><b>Finder:</b> ${found.name}</p>
+<p>${found.phone} | ${found.email}</p>
 
-<p><b>Finder:</b> ${f.name}</p>
-<p>${f.phone} | ${f.email}</p>
+<br>
+
+<button class="verify" onclick="verify('${lostId}')">Verify</button>
+<button class="reject" onclick="reject('${lostId}')">Reject</button>
 
 </div>
 `;
@@ -108,6 +143,28 @@ html += `
 document.getElementById("list").innerHTML = html || "<p>No matches found</p>";
 
 });
+
+/* VERIFY FUNCTION */
+window.verify = function(id){
+
+update(ref(db,"lostItems/"+id),{
+status:"Verified"
+});
+
+alert("Item Verified");
+
+};
+
+/* REJECT FUNCTION */
+window.reject = function(id){
+
+update(ref(db,"lostItems/"+id),{
+status:"Rejected"
+});
+
+alert("Item Rejected");
+
+};
 
 </script></body>
 </html>
