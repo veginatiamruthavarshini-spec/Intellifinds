@@ -51,11 +51,9 @@ text-decoration:none;
 border-radius:8px;
 }
 
-.status{
-font-weight:bold;
-margin-top:10px;
-}
-</style></head><body><h1>Police Dashboard</h1><div class="container" id="list"></div><a href="index.html" class="back">⬅ Back to Login</a>
+.match{color:green;font-weight:bold;}
+.status{font-weight:bold;margin-top:10px;}
+</style></head><body><h1>Police Dashboard</h1><div class="container" id="list"></div><!-- BACK TO LOGIN --><a href="index.html" class="back">⬅ Back to Login</a>
 
 <script type="module">
 
@@ -70,18 +68,18 @@ const db = getDatabase(app);
 
 let foundItems=[];
 
-/* STORE FOUND WITH ID */
+/* LOAD FOUND ITEMS WITH IDs */
 onValue(ref(db,"foundItems"),(snap)=>{
 foundItems=[];
 snap.forEach(c=>{
 foundItems.push({
 id:c.key,
-...c.val()
+data:c.val()
 });
 });
 });
 
-/* LOAD LOST */
+/* LOAD LOST ITEMS */
 onValue(ref(db,"lostItems"),(snap)=>{
 
 let html="";
@@ -91,35 +89,43 @@ snap.forEach(c=>{
 let lost=c.val();
 let lostId=c.key;
 
-foundItems.forEach(found=>{
+foundItems.forEach(f=>{
+
+let found=f.data;
 
 /* MATCH CONDITION */
-if(lost.item && found.item &&
-lost.item.toLowerCase().trim() === found.item.toLowerCase().trim()){
+if(lost.item && found.item && 
+lost.item.toLowerCase().trim()===found.item.toLowerCase().trim()){
 
 html += `
 <div class="card">
 
+<p class="match">MATCH FOUND</p>
+
+<img src="${lost.photo || ''}">
 <p><b>Lost:</b> ${lost.item}</p>
-<p>${lost.name} | ${lost.phone}</p>
+<p>${lost.description}</p>
+<p><b>Owner:</b> ${lost.name}</p>
+<p>${lost.phone} | ${lost.email}</p>
 
 <hr>
 
+<img src="${found.photo || ''}">
 <p><b>Found:</b> ${found.item}</p>
-<p>${found.name} | ${found.phone}</p>
+<p>${found.description}</p>
+<p><b>Finder:</b> ${found.name}</p>
+<p>${found.phone} | ${found.email}</p>
 
 <br>
 
-${
-lost.status==="Verified"
-? `<p class="status" style="color:green;">✔ Verified</p>`
-: lost.status==="Rejected"
-? `<p class="status" style="color:red;">✖ Rejected</p>`
-: `
-<button class="verify" onclick="verify('${lostId}')">Verify</button>
-<button class="reject" onclick="reject('${lostId}')">Reject</button>
-`
-}
+${lost.status==="Verified" ? `
+<p class="status" style="color:green;">✔ Verified</p>
+` : lost.status==="Rejected" ? `
+<p class="status" style="color:red;">✖ Rejected</p>
+` : `
+<button class="verify" onclick="verify('${lostId}', this)">Verify</button>
+<button class="reject" onclick="reject('${lostId}', this)">Reject</button>
+`}
 
 </div>
 `;
@@ -134,18 +140,36 @@ document.getElementById("list").innerHTML = html || "<p>No matches found</p>";
 
 });
 
-/* VERIFY */
-window.verify=function(id){
-update(ref(db,"lostItems/"+id),{
-status:"Verified"
-});
+/* VERIFY BUTTON */
+window.verify=function(id,btn){
+
+update(ref(db,"lostItems/"+id),{status:"Verified"});
+
+/* CHANGE BUTTON UI */
+btn.innerText="Verified";
+btn.disabled=true;
+btn.style.background="green";
+
+/* REMOVE REJECT BUTTON */
+let rejectBtn=btn.parentElement.querySelector(".reject");
+if(rejectBtn) rejectBtn.remove();
+
 };
 
-/* REJECT */
-window.reject=function(id){
-update(ref(db,"lostItems/"+id),{
-status:"Rejected"
-});
+/* REJECT BUTTON */
+window.reject=function(id,btn){
+
+update(ref(db,"lostItems/"+id),{status:"Rejected"});
+
+/* CHANGE BUTTON UI */
+btn.innerText="Rejected";
+btn.disabled=true;
+btn.style.background="red";
+
+/* REMOVE VERIFY BUTTON */
+let verifyBtn=btn.parentElement.querySelector(".verify");
+if(verifyBtn) verifyBtn.remove();
+
 };
 
 </script></body>
