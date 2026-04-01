@@ -1,113 +1,23 @@
-<!DOCTYPE html>
-
-<html>
-<head>
-<title>Report Found Item</title>
-
-<style>
-body{
-font-family:Arial;
-background:#a9bdd6;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.card{
-background:white;
-padding:30px;
-border-radius:15px;
-width:350px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
-
-input{
-width:100%;
-padding:10px;
-margin:8px 0;
-}
-
-button{
-padding:10px 20px;
-background:#2f66e0;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="card">
-
-<h2>Report Found Item</h2>
-
-<input id="item" placeholder="Item Name">
-<input id="description" placeholder="Description">
-<input id="location" placeholder="Location Found">
-
-<input id="name" placeholder="Finder Name">
-<input id="phone" placeholder="Phone Number">
-<input id="email" placeholder="Email">
-
-<input type="file" id="photo" accept="image/*" capture="environment">
-
-<button onclick="submitFound()">Submit</button>
-
-<br><br> <a href="dashboard321.html">Back</a>
-
-</div>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-let imageData="";
-
-/* IMAGE CONVERT */
-document.getElementById("photo").addEventListener("change", function(e){
-const file = e.target.files[0];
-const reader = new FileReader();
-
-reader.onload = function(){
-imageData = reader.result;
-};
-
-reader.readAsDataURL(file);
-});
-
 window.submitFound = function(){
+
+const btn = document.getElementById("submitBtn");
 
 const item=item.value;
 const description=description.value;
 const location=location.value;
-
 const name=name.value;
 const phone=phone.value;
 const email=email.value;
 
-/* VALIDATION */
 if(!item || !description || !location || !name || !phone || !email){
 alert("Fill all fields");
 return;
 }
 
-/* PUSH DATA */
+/* CHANGE BUTTON */
+btn.innerText="Submitting...";
+btn.disabled=true;
+
 push(ref(db,"foundItems"),{
 item,
 description,
@@ -116,18 +26,13 @@ photo:imageData,
 name,
 phone,
 email,
-status:"Waiting for Police Verification"
+status:"Submitted"
 });
 
-/* SUCCESS */
+/* FINAL UPDATE */
+btn.innerText="Submitted";
+btn.style.background="green";
+
 alert("Submitted Successfully");
 
-/* CLEAR FORM */
-document.querySelectorAll("input").forEach(i=>i.value="");
-
 }
-
-</script>
-
-</body>
-</html>
