@@ -2,11 +2,9 @@
 
 <html>
 <head>
-
 <title>Report Found Item</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#a9bdd6;
@@ -50,15 +48,15 @@ cursor:pointer;
 
 <h2>Report Found Item</h2>
 
-<input type="text" id="item" placeholder="Item Name">
-<input type="text" id="description" placeholder="Description">
-<input type="text" id="location" placeholder="Location Found">
+<input id="item" placeholder="Item Name">
+<input id="description" placeholder="Description">
+<input id="location" placeholder="Location Found">
 
-<input type="text" id="name" placeholder="Finder Name">
-<input type="text" id="phone" placeholder="Phone Number">
-<input type="text" id="email" placeholder="Email">
+<input id="name" placeholder="Finder Name">
+<input id="phone" placeholder="Phone Number">
+<input id="email" placeholder="Email">
 
-<input type="file" id="photo">
+<input type="file" id="photo" accept="image/*" capture="environment">
 
 <button onclick="submitFound()">Submit</button>
 
@@ -70,54 +68,62 @@ cursor:pointer;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-authDomain:"intellifinds-19f97.firebaseapp.com",
-projectId:"intellifinds-19f97",
-storageBucket:"intellifinds-19f97.appspot.com",
-messagingSenderId:"910756623728",
-appId:"1:910756623728:web:8ab55db46a984c75860bb5",
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storage = getStorage(app);
 
-window.submitFound = async function(){
+let imageData="";
 
-const item=document.getElementById("item").value;
-const description=document.getElementById("description").value;
-const location=document.getElementById("location").value;
+/* IMAGE CONVERT */
+document.getElementById("photo").addEventListener("change", function(e){
+const file = e.target.files[0];
+const reader = new FileReader();
 
-const name=document.getElementById("name").value;
-const phone=document.getElementById("phone").value;
-const email=document.getElementById("email").value;
+reader.onload = function(){
+imageData = reader.result;
+};
 
-const file=document.getElementById("photo").files[0];
+reader.readAsDataURL(file);
+});
 
-let photoURL="";
+window.submitFound = function(){
 
-if(file){
-const storageRef=sRef(storage,"foundImages/"+file.name);
-await uploadBytes(storageRef,file);
-photoURL=await getDownloadURL(storageRef);
+const item=item.value;
+const description=description.value;
+const location=location.value;
+
+const name=name.value;
+const phone=phone.value;
+const email=email.value;
+
+/* VALIDATION */
+if(!item || !description || !location || !name || !phone || !email){
+alert("Fill all fields");
+return;
 }
 
+/* PUSH DATA */
 push(ref(db,"foundItems"),{
 item,
 description,
 location,
-photo:photoURL,
+photo:imageData,
 name,
 phone,
 email,
 status:"Waiting for Police Verification"
 });
 
-alert("Found Item Submitted Successfully");
+/* SUCCESS */
+alert("Submitted Successfully");
+
+/* CLEAR FORM */
+document.querySelectorAll("input").forEach(i=>i.value="");
 
 }
 
