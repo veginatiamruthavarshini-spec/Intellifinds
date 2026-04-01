@@ -1,147 +1,103 @@
-<!DOCTYPE html>
-
-<html>
+<!DOCTYPE html><html>
 <head>
-
-<title>Police Dashboard</title>
-
-<style>
-
+<title>Police Dashboard</title><style>
 body{
 font-family:Arial;
-background:#a9bdd6;
-padding:40px;
-}
-
-h1{
+background:#8ea3bb;
 text-align:center;
+padding:40px;
 }
 
 .container{
 display:flex;
 flex-wrap:wrap;
-gap:20px;
 justify-content:center;
-margin-top:30px;
+gap:25px;
 }
 
 .card{
 background:white;
-padding:20px;
+padding:15px;
+border-radius:15px;
 width:300px;
-border-radius:10px;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 .card img{
 width:100%;
-height:200px;
+height:180px;
 object-fit:cover;
-border-radius:8px;
-margin-bottom:10px;
+border-radius:10px;
 }
 
-button{
-padding:8px 15px;
-border:none;
+.back{
+display:inline-block;
+margin-top:30px;
+padding:12px 20px;
 background:#2f66e0;
 color:white;
-border-radius:6px;
-cursor:pointer;
-margin-top:10px;
-margin-right:10px;
+text-decoration:none;
+border-radius:8px;
 }
 
-.reject{
-background:red;
+.match{
+color:green;
+font-weight:bold;
 }
-
-</style>
-
-</head>
-
-<body>
-
-<h1>Police Verification Panel</h1>
-
-<div class="container" id="matchList"></div>
+</style></head><body><h1>Police Dashboard</h1><div class="container" id="list"></div><a href="dashboard321.html" class="back">⬅ Back to Dashboard</a>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
-apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
-authDomain:"intellifinds-19f97.firebaseapp.com",
-projectId:"intellifinds-19f97",
-storageBucket:"intellifinds-19f97.appspot.com",
-messagingSenderId:"910756623728",
-appId:"1:910756623728:web:8ab55db46a984c75860bb5",
+const app = initializeApp({
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-};
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
-const container = document.getElementById("matchList");
 
 let foundItems = [];
 
-/* Load found items */
-onValue(ref(db,"foundItems"), (snapshot)=>{
+onValue(ref(db,"foundItems"),(snap)=>{
 foundItems = [];
-snapshot.forEach(child=>{
-foundItems.push(child.val());
-});
+snap.forEach(c=>foundItems.push(c.val()));
 });
 
-/* Load lost items and match */
-onValue(ref(db,"lostItems"), (snapshot)=>{
+onValue(ref(db,"lostItems"),(snap)=>{
 
-container.innerHTML = "";
+let html="";
 
-snapshot.forEach(child=>{
+snap.forEach(c=>{
+let lost = c.val();
 
-const lost = child.val();
-const lostKey = child.key;
+foundItems.forEach(f=>{
 
-foundItems.forEach(found=>{
+if(lost.item && f.item && lost.item.toLowerCase() === f.item.toLowerCase()){
 
-if(!lost.item || !found.item) return;
+html += `
+<div class="card">
 
-const lostItem = lost.item.toLowerCase();
-const foundItem = found.item.toLowerCase();
+<p class="match">MATCH FOUND</p>
 
-if(lostItem.includes(foundItem) || foundItem.includes(lostItem)){
+<img src="${lost.photo || ''}">
+<p><b>Lost Item:</b> ${lost.item}</p>
+<p>${lost.description}</p>
 
-const card = document.createElement("div");
-card.className = "card";
+<p><b>Owner:</b> ${lost.name}</p>
+<p>${lost.phone} | ${lost.email}</p>
 
-/* IMPORTANT: use innerHTML with BACKTICKS */
-card.innerHTML = 
-"<h3>Match Found</h3>" +
+<hr>
 
-"<img src='" + (lost.photo || '') + "'>" +
-"<p><b>Lost Item:</b> " + (lost.item || "N/A") + "</p>" +
+<img src="${f.photo || ''}">
+<p><b>Found Item:</b> ${f.item}</p>
+<p>${f.description}</p>
 
-"<p><b>Owner Name:</b> " + (lost.name || "Not Provided") + "</p>" +
-"<p><b>Owner Phone:</b> " + (lost.phone || "Not Provided") + "</p>" +
-"<p><b>Owner Email:</b> " + (lost.email || "Not Provided") + "</p>" +
+<p><b>Finder:</b> ${f.name}</p>
+<p>${f.phone} | ${f.email}</p>
 
-"<hr>" +
-
-"<img src='" + (found.photo || '') + "'>" +
-"<p><b>Found Item:</b> " + (found.item || "N/A") + "</p>" +
-
-"<p><b>Finder Name:</b> " + (found.name || "Not Provided") + "</p>" +
-"<p><b>Finder Phone:</b> " + (found.phone || "Not Provided") + "</p>" +
-"<p><b>Finder Email:</b> " + (found.email || "Not Provided") + "</p>" +
-
-"<button onclick=\"verifyItem('" + lostKey + "', this)\">Verify</button>" +
-"<button class='reject' onclick=\"rejectItem('" + lostKey + "')\">Reject</button>";
-
-container.appendChild(card);
+</div>
+`;
 
 }
 
@@ -149,35 +105,9 @@ container.appendChild(card);
 
 });
 
+document.getElementById("list").innerHTML = html || "<p>No matches found</p>";
+
 });
 
-/* VERIFY */
-window.verifyItem = async function(id, btn){
-
-await update(ref(db,"lostItems/"+id),{
-status:"Verified"
-});
-
-btn.innerText = "Verified";
-btn.disabled = true;
-btn.style.background = "green";
-
-const parent = btn.parentElement;
-const rejectBtn = parent.querySelector(".reject");
-if(rejectBtn) rejectBtn.remove();
-
-};
-
-/* REJECT */
-window.rejectItem = async function(id){
-
-await update(ref(db,"lostItems/"+id),{
-status:"Rejected"
-});
-
-};
-
-</script>
-
-</body>
+</script></body>
 </html>
