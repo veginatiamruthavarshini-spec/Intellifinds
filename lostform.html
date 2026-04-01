@@ -77,31 +77,38 @@ reader.onload=()=>imageData=reader.result;
 reader.readAsDataURL(e.target.files[0]);
 });
 
-window.submitLost=function(){
+window.submitLost = function(){
 
-const btn=document.getElementById("submitBtn");
+const btn = document.getElementById("submitBtn");
 
-const item=item.value;
-const description=description.value;
-const location=location.value;
-const name=name.value;
-const phone=phone.value;
-const email=email.value;
+const itemVal = document.getElementById("item").value;
+const descVal = document.getElementById("description").value;
+const locVal = document.getElementById("location").value;
+const nameVal = document.getElementById("name").value;
+const phoneVal = document.getElementById("phone").value;
+const emailVal = document.getElementById("email").value;
 
-if(!item||!description||!location||!name||!phone||!email){
+if(!itemVal || !descVal || !locVal || !nameVal || !phoneVal || !emailVal){
 alert("Fill all fields");
 return;
 }
 
-btn.innerText="Submitting...";
-btn.disabled=true;
+btn.innerText = "Submitting...";
+btn.disabled = true;
 
 push(ref(db,"lostItems"),{
-item,description,location,photo:imageData,name,phone,email,status:"Submitted"
+item:itemVal,
+description:descVal,
+location:locVal,
+photo:imageData,
+name:nameVal,
+phone:phoneVal,
+email:emailVal,
+status:"Submitted"
 });
 
-btn.innerText="Submitted";
-btn.style.background="green";
+btn.innerText = "Submitted";
+btn.style.background = "green";
 
 alert("Submitted Successfully");
 
