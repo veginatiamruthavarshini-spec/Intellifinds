@@ -1,105 +1,42 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
-  <title>Found Item</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .container {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      width: 300px;
-      margin: auto;
-    }
-
-    input {
-      width: 90%;
-      padding: 8px;
-      margin: 8px;
-      border-radius: 5px;
-      border: none;
-    }
-
-    button {
-      padding: 10px;
-      background: #3b82f6;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-
-<body>
-
-<h2>Report Found Item</h2>
-
-<div class="container">
-
-  <input id="title" placeholder="Item Name">
-  <input id="desc" placeholder="Description">
-  <input id="loc" placeholder="Location">
-
-  <h3>Your Details</h3>
-
-  <input id="name" placeholder="Your Name">
-  <input id="phone" placeholder="Phone Number">
-  <input id="address" placeholder="Address">
-
-  <button onclick="submitFound()">Submit</button>
-
-</div>
+<title>Found Item</title>
+<style>
+body{font-family:Arial;background:#a9bdd6;text-align:center;padding-top:50px;}
+input{display:block;margin:10px auto;padding:10px;width:250px;}
+button{padding:10px 20px;background:#2f66e0;color:white;border:none;}
+</style>
+</head><body><h2>Report Found Item</h2><input id="item" placeholder="Item">
+<input id="description" placeholder="Description">
+<input id="location" placeholder="Location"><h3>Your Details</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="email" placeholder="Email"><button onclick="submitFound()">Submit</button>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
-};
+const app = initializeApp({
+databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getDatabase(app);
 
-window.submitFound = async function () {
+window.submitFound = function(){
 
-  const title = document.getElementById("title").value;
-  const desc = document.getElementById("desc").value;
-  const loc = document.getElementById("loc").value;
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-  const address = document.getElementById("address").value;
+push(ref(db,"foundItems"),{
+item:document.getElementById("item").value,
+description:document.getElementById("description").value,
+location:document.getElementById("location").value,
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+email:document.getElementById("email").value,
+status:"Waiting"
+});
 
-  if (!title || !desc || !loc || !name || !phone || !address) {
-    alert("Please fill all fields");
-    return;
-  }
+alert("Submitted");
 
-  await addDoc(collection(db, "foundItems"), {
-    title: title,
-    description: desc,
-    location: loc,
-    name: name,
-    phone: phone,
-    address: address,
-    isVerified: false
-  });
-
-  alert("Found item submitted successfully!");
-
-  document.querySelectorAll("input").forEach(i => i.value = "");
-};
-</script>
-
-</body>
+}
+</script></body>
 </html>
