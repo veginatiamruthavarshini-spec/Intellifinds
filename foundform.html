@@ -77,32 +77,45 @@ reader.onload=()=>imageData=reader.result;
 reader.readAsDataURL(e.target.files[0]);
 });
 
-window.submitFound=function(){
+window.submitFound = function(){
 
-const btn=document.getElementById("submitBtn");
+const btn = document.getElementById("submitBtn");
 
-const item=item.value;
-const description=description.value;
-const location=location.value;
-const name=name.value;
-const phone=phone.value;
-const email=email.value;
+/* GET VALUES CORRECTLY */
+const itemVal = document.getElementById("item").value;
+const descVal = document.getElementById("description").value;
+const locVal = document.getElementById("location").value;
+const nameVal = document.getElementById("name").value;
+const phoneVal = document.getElementById("phone").value;
+const emailVal = document.getElementById("email").value;
 
-if(!item||!description||!location||!name||!phone||!email){
+/* VALIDATION */
+if(!itemVal || !descVal || !locVal || !nameVal || !phoneVal || !emailVal){
 alert("Fill all fields");
 return;
 }
 
-btn.innerText="Submitting...";
-btn.disabled=true;
+/* BUTTON CHANGE */
+btn.innerText = "Submitting...";
+btn.disabled = true;
 
+/* PUSH */
 push(ref(db,"foundItems"),{
-item,description,location,photo:imageData,name,phone,email,status:"Submitted"
+item:itemVal,
+description:descVal,
+location:locVal,
+photo:imageData,
+name:nameVal,
+phone:phoneVal,
+email:emailVal,
+status:"Submitted"
 });
 
-btn.innerText="Submitted";
-btn.style.background="green";
+/* FINAL UI */
+btn.innerText = "Submitted";
+btn.style.background = "green";
 
+/* ALERT */
 alert("Submitted Successfully");
 
 }
