@@ -1,58 +1,30 @@
-<!DOCTYPE html><html>
-<head>
-<title>Lost Item</title>
-<style>
-body{font-family:Arial;background:#a9bdd6;text-align:center;padding-top:50px;}
-input{display:block;margin:10px auto;padding:10px;width:250px;}
-button{padding:10px 20px;background:#2f66e0;color:white;border:none;margin-top:10px;}
-.back{display:block;margin-top:20px;}
-img{width:200px;margin-top:10px;}
-</style>
-</head><body><h2>Report Lost Item</h2><input id="item" placeholder="Item">
-<input id="description" placeholder="Description">
-<input id="location" placeholder="Location"><input type="file" accept="image/*" capture="environment" id="photo"><img id="preview"><h3>Your Details</h3>
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
-<input id="email" placeholder="Email"><button onclick="submitLost()">Submit</button>
-<a href="index.html" class="back">⬅ Back</a>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const app = initializeApp({
-databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+window.submitLost = async function(){
 
-const db = getDatabase(app);
+const item=document.getElementById("item").value;
+const description=document.getElementById("description").value;
+const location=document.getElementById("location").value;
 
-let imageData="";
+const name=document.getElementById("name").value;
+const phone=document.getElementById("phone").value;
+const email=document.getElementById("email").value;
 
-document.getElementById("photo").addEventListener("change", function(e){
-const file = e.target.files[0];
-const reader = new FileReader();
-reader.onload = function(){
-imageData = reader.result;
-document.getElementById("preview").src = imageData;
-};
-reader.readAsDataURL(file);
-});
-
-window.submitLost = function(){
+/* DEBUG CHECK */
+console.log(name, phone, email);
 
 push(ref(db,"lostItems"),{
-item:item.value,
-description:description.value,
-location:location.value,
-photo:imageData,
-name:name.value,
-phone:phone.value,
-email:email.value,
+item:item,
+description:description,
+location:location,
+photo:photoURL,
+name:name,
+phone:phone,
+email:email,
 status:"Waiting"
 });
 
 alert("Submitted");
 
 }
-</script></body>
-</html>
+</script>
