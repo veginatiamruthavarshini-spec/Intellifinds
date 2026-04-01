@@ -1,25 +1,137 @@
-<!DOCTYPE html><html>
-<body><h2>Found Items</h2>
-<div id="list"></div><a href="index.html">⬅ Back</a>
+<!DOCTYPE html>
+
+<html>
+<head>
+
+<title>Submitted Found Items</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#a9bdd6;
+padding:40px;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+.container{
+display:flex;
+flex-wrap:wrap;
+gap:25px;
+justify-content:center;
+}
+
+.card{
+background:white;
+padding:20px;
+width:280px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card img{
+width:100%;
+height:200px;
+object-fit:cover;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.backbtn{
+display:block;
+width:220px;
+margin:40px auto;
+text-align:center;
+padding:12px;
+background:#2f66e0;
+color:white;
+border-radius:8px;
+text-decoration:none;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Submitted Found Items</h1>
+
+<div class="container" id="list"></div>
+
+<a href="dashboard321.html" class="backbtn">Back to Dashboard</a>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const app = initializeApp({
+const firebaseConfig = {
+apiKey:"AIzaSyDb-C5-Mk2GVlsfFNJJKcCA1GoSI1mC_LI",
+authDomain:"intellifinds-19f97.firebaseapp.com",
+projectId:"intellifinds-19f97",
+storageBucket:"intellifinds-19f97.appspot.com",
+messagingSenderId:"910756623728",
+appId:"1:910756623728:web:8ab55db46a984c75860bb5",
 databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
+};
 
+const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-onValue(ref(db,"foundItems"),(snap)=>{
-let html="";
-snap.forEach(c=>{
-let d=c.val();
-html += "<p><b>"+d.item+"</b> - "+d.status+"</p>";
-html += "<p style='color:gray'>Details only visible to police</p><hr>";
+const container = document.getElementById("list");
+
+onValue(ref(db,"foundItems"),(snapshot)=>{
+
+container.innerHTML="";
+
+snapshot.forEach(child=>{
+
+const data = child.val();
+
+const card = document.createElement("div");
+card.className="card";
+
+card.innerHTML = `
+
+<img src="${data.photo || ''}">
+
+<p><b>Item:</b> ${data.item || 'N/A'}</p>
+<p><b>Description:</b> ${data.description || 'N/A'}</p>
+<p><b>Location:</b> ${data.location || 'N/A'}</p>
+
+<p><b>Status:</b> ${data.status || "Waiting for Police Verification"}</p>
+
+${
+data.status === "Verified" ? `
+
+<hr>
+
+<p><b>Finder Name:</b> ${data.name || 'Not Provided'}</p>
+<p><b>Phone:</b> ${data.phone || 'Not Provided'}</p>
+<p><b>Email:</b> ${data.email || 'Not Provided'}</p>
+
+` : `
+
+<p><i>Details will be revealed after police verification</i></p>
+
+`
+}
+
+`;
+
+container.appendChild(card);
+
 });
-document.getElementById("list").innerHTML=html;
+
 });
-</script></body>
+
+</script>
+
+</body>
 </html>
