@@ -38,15 +38,8 @@ border-radius:6px;
 cursor:pointer;
 }
 
-.verify{
-background:green;
-color:white;
-}
-
-.reject{
-background:red;
-color:white;
-}
+.verify{background:green;color:white;}
+.reject{background:red;color:white;}
 
 .back{
 display:inline-block;
@@ -58,11 +51,9 @@ text-decoration:none;
 border-radius:8px;
 }
 
-.match{
-color:green;
-font-weight:bold;
-}
-</style></head><body><h1>Police Dashboard</h1><div class="container" id="list"></div><a href="dashboard321.html" class="back">⬅ Back to Dashboard</a>
+.match{color:green;font-weight:bold;}
+.status{font-weight:bold;margin-top:10px;}
+</style></head><body><h1>Police Dashboard</h1><div class="container" id="list"></div><!-- BACK TO LOGIN --><a href="index.html" class="back">⬅ Back to Login</a>
 
 <script type="module">
 
@@ -75,11 +66,11 @@ databaseURL:"https://intellifinds-19f97-default-rtdb.asia-southeast1.firebasedat
 
 const db = getDatabase(app);
 
-let foundItems = [];
+let foundItems=[];
 
 /* LOAD FOUND ITEMS WITH IDs */
 onValue(ref(db,"foundItems"),(snap)=>{
-foundItems = [];
+foundItems=[];
 snap.forEach(c=>{
 foundItems.push({
 id:c.key,
@@ -95,17 +86,16 @@ let html="";
 
 snap.forEach(c=>{
 
-let lost = c.val();
-let lostId = c.key;
+let lost=c.val();
+let lostId=c.key;
 
 foundItems.forEach(f=>{
 
-let found = f.data;
-let foundId = f.id;
+let found=f.data;
 
 /* MATCH CONDITION */
 if(lost.item && found.item && 
-lost.item.toLowerCase().trim() === found.item.toLowerCase().trim()){
+lost.item.toLowerCase().trim()===found.item.toLowerCase().trim()){
 
 html += `
 <div class="card">
@@ -128,8 +118,14 @@ html += `
 
 <br>
 
-<button class="verify" onclick="verify('${lostId}')">Verify</button>
-<button class="reject" onclick="reject('${lostId}')">Reject</button>
+${lost.status==="Verified" ? `
+<p class="status" style="color:green;">✔ Verified</p>
+` : lost.status==="Rejected" ? `
+<p class="status" style="color:red;">✖ Rejected</p>
+` : `
+<button class="verify" onclick="verify('${lostId}', this)">Verify</button>
+<button class="reject" onclick="reject('${lostId}', this)">Reject</button>
+`}
 
 </div>
 `;
@@ -144,25 +140,35 @@ document.getElementById("list").innerHTML = html || "<p>No matches found</p>";
 
 });
 
-/* VERIFY FUNCTION */
-window.verify = function(id){
+/* VERIFY BUTTON */
+window.verify=function(id,btn){
 
-update(ref(db,"lostItems/"+id),{
-status:"Verified"
-});
+update(ref(db,"lostItems/"+id),{status:"Verified"});
 
-alert("Item Verified");
+/* CHANGE BUTTON UI */
+btn.innerText="Verified";
+btn.disabled=true;
+btn.style.background="green";
+
+/* REMOVE REJECT BUTTON */
+let rejectBtn=btn.parentElement.querySelector(".reject");
+if(rejectBtn) rejectBtn.remove();
 
 };
 
-/* REJECT FUNCTION */
-window.reject = function(id){
+/* REJECT BUTTON */
+window.reject=function(id,btn){
 
-update(ref(db,"lostItems/"+id),{
-status:"Rejected"
-});
+update(ref(db,"lostItems/"+id),{status:"Rejected"});
 
-alert("Item Rejected");
+/* CHANGE BUTTON UI */
+btn.innerText="Rejected";
+btn.disabled=true;
+btn.style.background="red";
+
+/* REMOVE VERIFY BUTTON */
+let verifyBtn=btn.parentElement.querySelector(".verify");
+if(verifyBtn) verifyBtn.remove();
 
 };
 
