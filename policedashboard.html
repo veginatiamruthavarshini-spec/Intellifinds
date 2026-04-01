@@ -1,6 +1,8 @@
 <!DOCTYPE html><html>
 <body><h2>Police Dashboard</h2>
-<div id="list"></div><script type="module">
+<div id="list"></div><a href="index.html">⬅ Back</a>
+
+<script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -23,31 +25,24 @@ onValue(ref(db,"lostItems"),(snap)=>{
 let html="";
 
 snap.forEach(c=>{
-
 let lost=c.val();
 let id=c.key;
 
 found.forEach(f=>{
-
 if(lost.item && f.item && lost.item.toLowerCase()==f.item.toLowerCase()){
 
 html += "<p><b>Lost:</b> "+lost.item+"</p>";
-html += "<p>Name: "+lost.name+" | Phone: "+lost.phone+" | Email: "+lost.email+"</p>";
+html += "<p>"+lost.name+" | "+lost.phone+" | "+lost.email+"</p>";
 
 html += "<p><b>Found:</b> "+f.item+"</p>";
-html += "<p>Name: "+f.name+" | Phone: "+f.phone+" | Email: "+f.email+"</p>";
+html += "<p>"+f.name+" | "+f.phone+" | "+f.email+"</p>";
 
-html += "<button onclick=\"verify('"+id+"')\">Verify</button>";
-html += "<hr>";
-
+html += "<button onclick=\"verify('"+id+"')\">Verify</button><hr>";
 }
-
 });
-
 });
 
 document.getElementById("list").innerHTML=html;
-
 });
 
 window.verify=function(id){
